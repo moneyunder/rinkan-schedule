@@ -18,99 +18,91 @@
     top: 0; 
     background: #fff; 
     z-index: 10; 
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.08); 
   }
   .page-title { 
     text-align: center; 
-    font-size: 16px; 
+    font-size: 18px; 
     font-weight: bold; 
     padding: 12px 0 4px; 
     color: #0056b3; 
     margin: 0; 
   }
-  .tabs { 
-    display: flex; 
-  }
+  .tabs { display: flex; }
   .tab { 
     flex: 1; 
     padding: 12px 0; 
     text-align: center; 
     font-weight: bold; 
-    font-size: 14px; 
+    font-size: 16px; 
     cursor: pointer; 
     border-bottom: 3px solid transparent; 
-    color: #888;
-    -webkit-tap-highlight-color: transparent;
+    color: #888; 
+    -webkit-tap-highlight-color: transparent; 
+    user-select: none; 
+  }
+  .tab.active { border-bottom-color: #0056b3; color: #0056b3; }
+  
+  /* 絞り込みフィルター部分のスタイル */
+  .filter-wrapper {
+    background: #fafafa;
+    padding: 10px 15px;
+    border-top: 1px solid #eee;
+  }
+  .filter-title {
+    font-size: 11px;
+    font-weight: bold;
+    color: #666;
+    margin-bottom: 8px;
+  }
+  .filter-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .filter-chip {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
     user-select: none;
+    border: 1px solid transparent;
+    opacity: 0.45;
+    filter: grayscale(100%);
+    transition: all 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
   }
-  .tab.active { 
-    border-bottom-color: #0056b3; 
-    color: #0056b3; 
+  .filter-chip.active {
+    opacity: 1;
+    filter: grayscale(0%);
+    border-color: currentColor;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
   }
-  .day-content { 
-    display: none; 
-    padding: 12px; 
-  }
-  .day-content.active { 
-    display: block; 
-  }
-  .card { 
-    background: #fff; 
-    border-radius: 8px; 
-    padding: 15px; 
-    margin-bottom: 12px; 
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
-  }
-  .time-activity { 
-    font-size: 15px; 
-    font-weight: bold; 
-    border-bottom: 1px solid #eee; 
-    padding-bottom: 8px; 
-    margin-bottom: 8px; 
-    color: #222; 
-  }
-  .role-row { 
-    display: flex; 
-    margin-bottom: 6px; 
-    font-size: 13px; 
-    align-items: flex-start; 
-  }
-  .role-row:last-child { 
-    margin-bottom: 0; 
-  }
-  .role-label { 
-    padding: 3px 6px; 
-    border-radius: 4px; 
-    font-size: 11px; 
-    font-weight: bold; 
-    margin-right: 10px; 
-    width: 70px; 
-    text-align: center; 
-    flex-shrink: 0; 
-  }
-  .role-task { 
-    padding-top: 1px; 
-    line-height: 1.4; 
-    word-break: break-word;
-  }
-  .color-omote { background: #e3f2fd; color: #0d47a1; }
-  .color-hoken  { background: #ffebee; color: #b71c1c; }
-  .color-seikatsu{ background: #e8f5e9; color: #1b5e20; }
-  .color-tea    { background: #fff3e0; color: #e65100; }
-  .color-camp   { background: #f3e5f5; color: #4a148c; }
-  #loading { 
-    text-align: center; 
-    padding: 20px; 
-    font-size: 14px; 
-    color: #666; 
-  }
-  #error-message {
-    color: #b71c1c;
-    text-align: center;
-    padding: 20px;
-    font-size: 14px;
-    display: none;
-  }
+
+  .day-content { display: none; padding: 12px; }
+  .day-content.active { display: block; }
+  .card { background: #fff; border-radius: 8px; padding: 15px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+  .time-activity { font-size: 17px; font-weight: bold; border-bottom: 1px solid #eee; padding-bottom: 8px; margin-bottom: 8px; color: #222; }
+  .role-row { display: flex; margin-bottom: 8px; font-size: 15px; align-items: flex-start; }
+  .role-row:last-child { margin-bottom: 0; }
+  .role-label { padding: 4px 6px; border-radius: 4px; font-size: 12px; font-weight: bold; margin-right: 10px; width: 75px; text-align: center; flex-shrink: 0; }
+  .role-task { padding-top: 1px; line-height: 1.5; word-break: break-word; }
+  
+  /* 動的追加に対応するためのカラーパレット（最大10色） */
+  .color-0 { background: #e3f2fd; color: #0d47a1; }
+  .color-1 { background: #ffebee; color: #b71c1c; }
+  .color-2 { background: #e8f5e9; color: #1b5e20; }
+  .color-3 { background: #fff3e0; color: #e65100; }
+  .color-4 { background: #f3e5f5; color: #4a148c; }
+  .color-5 { background: #e0f2f1; color: #004d40; }
+  .color-6 { background: #fce4ec; color: #880e4f; }
+  .color-7 { background: #efebe9; color: #3e2723; }
+  .color-8 { background: #e8eaf6; color: #1a237e; }
+  .color-9 { background: #fff8e1; color: #ff6f00; }
+
+  #loading { text-align: center; padding: 20px; font-size: 16px; color: #666; }
+  #error-message { color: #b71c1c; text-align: center; padding: 20px; font-size: 15px; display: none; }
 </style>
 </head>
 <body>
@@ -121,6 +113,10 @@
       <div class="tab active" onclick="switchTab(1)">1日目</div>
       <div class="tab" onclick="switchTab(2)">2日目</div>
       <div class="tab" onclick="switchTab(3)">3日目</div>
+    </div>
+    <div class="filter-wrapper" id="filter-wrapper" style="display: none;">
+      <div class="filter-title">表示する担当（タップでON/OFF）:</div>
+      <div class="filter-container" id="filter-container"></div>
     </div>
   </div>
 
@@ -134,13 +130,7 @@
   <script>
     const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuIKDbPlkIKbIeIFFys1JT8jL6N4PNhLZOL7EMWkLhzNOw5E_UiIoB4Hc-6XYCzZ82GjiMYhasbmkB/pub?output=csv';
 
-    const roleClasses = [
-      { name: '表の動き', class: 'color-omote' },
-      { name: '保健', class: 'color-hoken' },
-      { name: '生活', class: 'color-seikatsu' },
-      { name: 'お茶', class: 'color-tea' },
-      { name: '飯盒･ｷｬﾝﾌﾟ', class: 'color-camp' }
-    ];
+    let roleHeaders = [];
 
     async function loadData() {
       try {
@@ -152,6 +142,7 @@
         const text = decoder.decode(buffer);
         
         parseCSV(text);
+        initFilters(); // データの読み込み完了後にフィルターを初期化
         document.getElementById('loading').style.display = 'none';
       } catch (error) {
         document.getElementById('loading').style.display = 'none';
@@ -192,24 +183,31 @@
         const colA = row[0].trim();
         if (colA === '') return;
 
+        if (colA === '時間') {
+          roleHeaders = [];
+          for (let i = 2; i < row.length; i++) {
+            if (row[i].trim() !== '') {
+              roleHeaders.push(row[i].trim());
+            }
+          }
+          return;
+        }
+
         if (colA.includes('月') && colA.includes('日') && !colA.includes(':')) {
           currentDay++;
           return;
         }
 
-        if (colA === '時間' || currentDay === 0 || currentDay > 3) return;
+        if (currentDay === 0 || currentDay > 3 || roleHeaders.length === 0) return;
 
         const time = colA;
         const activity = row[1] ? row[1].trim() : '';
         const timeActivity = activity ? `${time} - ${activity}` : time;
         
-        const tasks = [
-          row[2] ? row[2].trim() : '',
-          row[3] ? row[3].trim() : '',
-          row[4] ? row[4].trim() : '',
-          row[5] ? row[5].trim() : '',
-          row[6] ? row[6].trim() : ''
-        ];
+        const tasks = [];
+        for (let i = 0; i < roleHeaders.length; i++) {
+          tasks.push(row[i + 2] ? row[i + 2].trim() : '');
+        }
 
         if (tasks.every(t => t === '')) return;
 
@@ -217,9 +215,11 @@
         
         tasks.forEach((task, index) => {
           if (task && task !== '') {
+            const colorClass = `color-${index % 10}`;
+            // 絞り込み判定用に data-role-index 属性を付与
             cardHtml += `
-              <div class="role-row">
-                <span class="role-label ${roleClasses[index].class}">${roleClasses[index].name}</span>
+              <div class="role-row" data-role-index="${index}">
+                <span class="role-label ${colorClass}">${roleHeaders[index]}</span>
                 <span class="role-task">${task.replace(/\n/g, '<br>')}</span>
               </div>`;
           }
@@ -230,6 +230,65 @@
         const container = document.getElementById('day' + currentDay);
         if (container) {
           container.insertAdjacentHTML('beforeend', cardHtml);
+        }
+      });
+    }
+
+    // 絞り込みフィルターの生成と初期化
+    function initFilters() {
+      const filterWrapper = document.getElementById('filter-wrapper');
+      const filterContainer = document.getElementById('filter-container');
+      filterContainer.innerHTML = '';
+      
+      if (roleHeaders.length === 0) return;
+      
+      roleHeaders.forEach((header, index) => {
+        const chip = document.createElement('div');
+        const colorClass = `color-${index % 10}`;
+        chip.className = `filter-chip ${colorClass} active`; // 初期状態はすべてON（active）
+        chip.dataset.roleIndex = index;
+        chip.innerText = header;
+        
+        // タップされた時の処理
+        chip.onclick = () => {
+          chip.classList.toggle('active');
+          applyFilters();
+        };
+        
+        filterContainer.appendChild(chip);
+      });
+      
+      filterWrapper.style.display = 'block';
+    }
+
+    // 絞り込み処理の適用
+    function applyFilters() {
+      // 現在ONになっているフィルターのインデックスを取得
+      const activeChips = document.querySelectorAll('.filter-chip.active');
+      const activeIndices = Array.from(activeChips).map(chip => chip.dataset.roleIndex);
+      
+      const cards = document.querySelectorAll('.card');
+      
+      cards.forEach(card => {
+        let visibleRolesCount = 0;
+        const roleRows = card.querySelectorAll('.role-row');
+        
+        roleRows.forEach(row => {
+          const index = row.dataset.roleIndex;
+          // タスクがONのフィルターに含まれているか判定
+          if (activeIndices.includes(index)) {
+            row.style.display = 'flex';
+            visibleRolesCount++;
+          } else {
+            row.style.display = 'none';
+          }
+        });
+        
+        // カード内のタスクがすべて非表示になった場合はカード自体を隠す
+        if (visibleRolesCount === 0) {
+          card.style.display = 'none';
+        } else {
+          card.style.display = 'block';
         }
       });
     }
