@@ -6,13 +6,12 @@
 <meta name="format-detection" content="telephone=no">
 <title>林間学校スタッフ行程表</title>
 <style>
-  /* CSS変数による文字サイズ管理 */
   :root {
     --font-time: 17px;
     --font-task-label: 12px;
     --font-task-text: 15px;
     --font-tab: 16px;
-    --font-table: 14px;
+    --font-table: 13px;
   }
   
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; margin: 0; background-color: #f4f6f8; color: #333; -webkit-text-size-adjust: 100%; }
@@ -23,7 +22,7 @@
   .page-title { font-size: 17px; font-weight: bold; color: #0056b3; margin: 0; flex: 1; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .hamburger-btn, .settings-btn { background: none; border: none; font-size: 20px; cursor: pointer; padding: 5px; color: #555; -webkit-tap-highlight-color: transparent; display: flex; align-items: center; justify-content: center; }
   
-  /* サイドバー（ハンバーガーメニュー） */
+  /* サイドバー */
   .sidebar-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 100; display: none; opacity: 0; transition: opacity 0.3s ease; }
   .sidebar-overlay.active { display: block; opacity: 1; }
   .sidebar { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background: #fff; z-index: 101; box-shadow: 2px 0 5px rgba(0,0,0,0.1); transition: left 0.3s ease; overflow-y: auto; display: flex; flex-direction: column; }
@@ -43,7 +42,6 @@
   .setting-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
   .setting-title { font-size: 13px; font-weight: bold; color: #555; }
   
-  /* 文字サイズスライダー */
   .font-size-slider-container { display: flex; align-items: center; gap: 15px; padding: 5px 0; }
   .font-size-slider-container input[type="range"] { flex: 1; height: 6px; -webkit-appearance: none; background: #ddd; border-radius: 3px; outline: none; }
   .font-size-slider-container input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #0056b3; cursor: pointer; }
@@ -53,7 +51,7 @@
   .filter-chip { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; user-select: none; border: 1px solid transparent; opacity: 0.45; filter: grayscale(100%); transition: all 0.2s ease; -webkit-tap-highlight-color: transparent; }
   .filter-chip.active { opacity: 1; filter: grayscale(0%); border-color: currentColor; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
   
-  /* 行程表専用（タブとカード） */
+  /* 行程表専用 */
   .tabs { display: flex; }
   .tab { flex: 1; padding: 12px 0; text-align: center; font-weight: bold; font-size: var(--font-tab); cursor: pointer; border-bottom: 3px solid transparent; color: #888; -webkit-tap-highlight-color: transparent; user-select: none; }
   .tab.active { border-bottom-color: #0056b3; color: #0056b3; }
@@ -66,11 +64,11 @@
   .role-label { padding: 4px 6px; border-radius: 4px; font-size: var(--font-task-label); font-weight: bold; margin-right: 10px; width: 75px; text-align: center; flex-shrink: 0; }
   .role-task { padding-top: 1px; line-height: 1.5; word-break: break-word; }
   
-  /* 汎用シート用テーブル */
+  /* 汎用シート用テーブル（横スクロールなし・幅自動比率） */
   .generic-container { display: none; padding: 12px; }
-  .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; box-sizing: border-box; background: #fff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-  .generic-table { border-collapse: collapse; width: 100%; min-width: max-content; font-size: var(--font-table); }
-  .generic-table th, .generic-table td { border: 1px solid #eee; padding: 12px 15px; text-align: left; vertical-align: top; }
+  .table-responsive { width: 100%; box-sizing: border-box; background: #fff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); overflow: hidden; }
+  .generic-table { border-collapse: collapse; width: 100%; table-layout: fixed; font-size: var(--font-table); }
+  .generic-table th, .generic-table td { border: 1px solid #eee; padding: 8px 10px; text-align: left; vertical-align: top; word-break: break-word; overflow-wrap: break-word; }
   .generic-table th { background-color: #f4f6f8; font-weight: bold; color: #555; border-bottom: 2px solid #ddd; }
   .generic-table tbody tr:nth-child(even) { background-color: #fafafa; }
   
@@ -82,11 +80,12 @@
 </head>
 <body>
 
-  <!-- サイドバー -->
+  <!-- サイドバー（ハンバーガーメニュー） -->
   <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
   <div class="sidebar" id="sidebar">
+    <!-- タイトル変更 -->
     <div class="sidebar-header">
-      シート一覧
+      関西林間2026
       <button class="sidebar-close" onclick="toggleSidebar()">&times;</button>
     </div>
     <ul class="sidebar-menu" id="sidebar-menu"></ul>
@@ -94,22 +93,18 @@
 
   <div class="header-container">
     <div class="header-top">
-      <!-- ハンバーガーアイコン -->
       <button class="hamburger-btn" onclick="toggleSidebar()">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
       </button>
       
       <h1 class="page-title" id="page-title">読込中...</h1>
       
-      <!-- シンプルな歯車アイコン -->
       <button class="settings-btn" onclick="toggleSettings()">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
       </button>
     </div>
     
-    <!-- 設定パネル -->
     <div class="settings-panel" id="settings-panel">
-      <!-- 文字サイズ（横スクロール） -->
       <div class="setting-section">
         <div class="setting-header"><span class="setting-title">文字サイズ</span></div>
         <div class="font-size-slider-container">
@@ -119,7 +114,6 @@
         </div>
       </div>
       
-      <!-- 担当絞り込み（行程表シートのみ表示） -->
       <div class="setting-section" id="filter-section" style="display: none;">
         <div class="setting-header">
           <span class="setting-title">表示する担当 (タップでON/OFF)</span>
@@ -129,7 +123,6 @@
       </div>
     </div>
 
-    <!-- 行程表用タブ -->
     <div class="tabs" id="itinerary-tabs" style="display: none;">
       <div class="tab active" onclick="switchTab(1)">1日目</div>
       <div class="tab" onclick="switchTab(2)">2日目</div>
@@ -140,14 +133,12 @@
   <div id="loading">パスワードを確認しています...</div>
   <div id="error-message"></div>
   
-  <!-- 行程表コンテナ -->
   <div id="itinerary-container" style="display: none;">
     <div id="day1" class="day-content active"></div>
     <div id="day2" class="day-content"></div>
     <div id="day3" class="day-content"></div>
   </div>
 
-  <!-- 汎用テーブルコンテナ -->
   <div id="generic-container" class="generic-container"></div>
 
   <script>
@@ -170,10 +161,9 @@
         const text = await response.text();
         if (text === "error") throw new Error("パスワードが間違っています。");
         
-        try { sheetsData = JSON.parse(text); } catch (e) { throw new Error("データ解析エラー"); }
+        try { sheetsData = JSON.parse(text); } catch (e) { throw new Error("データ解析エラー: GASコードが新バージョンとしてデプロイされていない可能性があります。"); }
         if (sheetsData.length === 0) throw new Error("シートが見つかりません。");
 
-        // サイドバーの生成（スプレッドシートの左から右の順）
         const menuContainer = document.getElementById('sidebar-menu');
         menuContainer.innerHTML = '';
         
@@ -190,7 +180,6 @@
           }
         });
         
-        // メニューに行程表が無かった場合は一番左のシートを選択
         if (targetIndex === 0 && sheetsData[0].sheetName !== "行程表") {
           menuContainer.firstChild.classList.add('active');
         }
@@ -207,23 +196,21 @@
       }
     }
 
-    // サイドバーからのシート選択処理
     function selectSheet(index, liElement) {
       document.querySelectorAll('.sidebar-menu li').forEach(el => el.classList.remove('active'));
       liElement.classList.add('active');
       renderSheet(index);
-      toggleSidebar(); // 選択後にサイドバーを閉じる
+      toggleSidebar();
     }
 
     function renderSheet(index) {
       const sheet = sheetsData[index];
       const csv = sheet.csvData;
+      const colWidths = sheet.colWidths || [];
       
-      // タイトル変更
       document.getElementById('page-title').innerText = sheet.sheetName;
       
       if (sheet.sheetName === "行程表") {
-        // --- 行程表モード ---
         document.getElementById('itinerary-container').style.display = 'block';
         document.getElementById('itinerary-tabs').style.display = 'flex';
         document.getElementById('filter-section').style.display = 'block';
@@ -238,19 +225,17 @@
         parseItineraryCSV(csv);
         initFilters();
       } else {
-        // --- 汎用テーブルモード ---
         document.getElementById('itinerary-container').style.display = 'none';
         document.getElementById('itinerary-tabs').style.display = 'none';
         document.getElementById('filter-section').style.display = 'none';
         document.getElementById('generic-container').style.display = 'block';
         
-        parseGenericCSV(csv);
+        parseGenericCSV(csv, colWidths);
       }
       
       window.scrollTo(0, 0);
     }
 
-    // CSV共通パース処理
     function parseCSVData(text) {
       const rows = [];
       let currentRow = [];
@@ -274,7 +259,6 @@
       return rows;
     }
 
-    // 行程表用パース
     function parseItineraryCSV(text) {
       const lines = parseCSVData(text);
       let currentDay = 0;
@@ -312,20 +296,32 @@
       });
     }
 
-    // 汎用テーブル用パース（行程表以外のシート）
-    function parseGenericCSV(text) {
+    function parseGenericCSV(text, colWidths) {
       const lines = parseCSVData(text);
       const container = document.getElementById('generic-container');
       container.innerHTML = '';
       
-      // 全て空の行を除去
       const validLines = lines.filter(row => !row.every(cell => cell.trim() === ''));
       if (validLines.length === 0) {
         container.innerHTML = '<div style="padding: 20px; text-align: center; color: #666;">データがありません。</div>';
         return;
       }
+
+      // スプレッドシートの列幅比率を計算
+      let colGroupHtml = '';
+      if (colWidths && colWidths.length > 0) {
+        const totalWidth = colWidths.reduce((sum, w) => sum + w, 0);
+        colGroupHtml = '<colgroup>';
+        colWidths.forEach(width => {
+          const pct = (width / totalWidth) * 100;
+          colGroupHtml += `<col style="width: ${pct}%;">`;
+        });
+        colGroupHtml += '</colgroup>';
+      }
       
       let html = '<div class="table-responsive"><table class="generic-table">';
+      html += colGroupHtml;
+      
       validLines.forEach((row, rowIndex) => {
         if (rowIndex === 0) {
           html += '<thead><tr>';
@@ -341,13 +337,12 @@
       container.innerHTML = html;
     }
 
-    // UI関連の関数
     function toggleSidebar() {
       const sidebar = document.getElementById('sidebar');
       const overlay = document.getElementById('sidebar-overlay');
       if (sidebar.classList.contains('active')) {
         sidebar.classList.remove('active');
-        setTimeout(() => overlay.classList.remove('active'), 10);
+        setTimeout(() => overlay.classList.remove('active'), 200);
       } else {
         overlay.classList.add('active');
         sidebar.classList.add('active');
@@ -358,14 +353,13 @@
       document.getElementById('settings-panel').classList.toggle('open');
     }
 
-    // 文字サイズのスライダー変更
     function changeFontSize(level) {
       const sizes = {
         1: { time: '13px', label: '10px', text: '12px', tab: '12px', table: '11px' },
         2: { time: '15px', label: '11px', text: '13px', tab: '14px', table: '12px' },
-        3: { time: '17px', label: '12px', text: '15px', tab: '16px', table: '14px' },
-        4: { time: '19px', label: '13px', text: '17px', tab: '18px', table: '16px' },
-        5: { time: '21px', label: '14px', text: '19px', tab: '20px', table: '18px' }
+        3: { time: '17px', label: '12px', text: '15px', tab: '16px', table: '13px' },
+        4: { time: '19px', label: '13px', text: '17px', tab: '18px', table: '15px' },
+        5: { time: '21px', label: '14px', text: '19px', tab: '20px', table: '17px' }
       };
       const root = document.documentElement;
       root.style.setProperty('--font-time', sizes[level].time);
@@ -375,7 +369,6 @@
       root.style.setProperty('--font-table', sizes[level].table);
     }
 
-    // フィルター関連（行程表用）
     function initFilters() {
       const filterSection = document.getElementById('filter-section');
       const filterContainer = document.getElementById('filter-container');
@@ -417,7 +410,6 @@
       document.querySelectorAll('.day-content').forEach((el, index) => el.classList.toggle('active', index + 1 === day));
     }
 
-    // 初期化実行
     loadData();
   </script>
 </body>
