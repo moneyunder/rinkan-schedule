@@ -34,10 +34,18 @@
   .setting-section:last-child { margin-bottom: 0; }
   .setting-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
   .setting-title { font-size: 13px; font-weight: bold; color: #555; }
-  .font-size-slider-container { display: flex; align-items: center; gap: 15px; padding: 5px 0; }
-  .font-size-slider-container input[type="range"] { flex: 1; height: 6px; -webkit-appearance: none; background: #ddd; border-radius: 3px; outline: none; }
-  .font-size-slider-container input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #0056b3; cursor: pointer; }
+  
+  /* スライダーの目盛りスタイル */
+  .font-size-slider-container { display: flex; align-items: center; gap: 5px; padding: 5px 0; }
+  .slider-wrapper { flex: 1; position: relative; display: flex; flex-direction: column; margin: 0 10px; }
+  .font-size-slider-container input[type="range"] { width: 100%; height: 6px; -webkit-appearance: none; background: #ddd; border-radius: 3px; outline: none; margin: 10px 0; z-index: 2; position: relative; }
+  .font-size-slider-container input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; border-radius: 50%; background: #0056b3; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+  .ticks { display: flex; justify-content: space-between; padding: 0 8px; margin-top: -24px; position: relative; z-index: 1; pointer-events: none; }
+  .tick { width: 2px; height: 10px; background: #b0b0b0; border-radius: 1px; }
+
   .reset-btn { background: #e0e0e0; border: none; padding: 5px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; color: #333; -webkit-tap-highlight-color: transparent; }
+  .reset-btn:active { background: #d0d0d0; }
+  
   .filter-container { display: flex; flex-wrap: wrap; gap: 8px; }
   .filter-chip { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; user-select: none; border: 1px solid transparent; opacity: 0.45; filter: grayscale(100%); transition: all 0.2s ease; }
   .filter-chip.active { opacity: 1; filter: grayscale(0%); border-color: currentColor; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
@@ -58,6 +66,7 @@
   .generic-container { display: none; padding: 12px; }
   .table-responsive { width: 100%; box-sizing: border-box; background: #fff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); overflow: hidden; }
   .generic-table { border-collapse: collapse; width: 100%; table-layout: fixed; font-size: var(--font-table); }
+  .generic-table.auto-layout { table-layout: auto; }
   .generic-table th, .generic-table td { border: 1px solid #eee; padding: 8px 10px; text-align: left; vertical-align: top; word-break: break-word; overflow-wrap: break-word; }
   .generic-table th { background-color: #f4f6f8; font-weight: bold; color: #555; border-bottom: 2px solid #ddd; }
   .generic-table tbody tr:nth-child(even) { background-color: #fafafa; }
@@ -97,11 +106,24 @@
     </div>
     
     <div class="settings-panel" id="settings-panel">
+      <!-- 文字サイズの設定にリセットボタンと目盛りを追加 -->
       <div class="setting-section">
-        <div class="setting-header"><span class="setting-title">文字サイズ</span></div>
+        <div class="setting-header">
+          <span class="setting-title">文字サイズ</span>
+          <button class="reset-btn" onclick="resetFontSize()">標準に戻す</button>
+        </div>
         <div class="font-size-slider-container">
           <span style="font-size: 12px; color: #666;">小</span>
-          <input type="range" id="font-slider" min="1" max="5" step="1" value="3" oninput="changeFontSize(this.value)">
+          <div class="slider-wrapper">
+            <input type="range" id="font-slider" min="1" max="5" step="1" value="3" oninput="changeFontSize(this.value)">
+            <div class="ticks">
+              <span class="tick"></span>
+              <span class="tick"></span>
+              <span class="tick"></span>
+              <span class="tick"></span>
+              <span class="tick"></span>
+            </div>
+          </div>
           <span style="font-size: 18px; color: #666;">大</span>
         </div>
       </div>
@@ -114,7 +136,6 @@
       </div>
     </div>
 
-    <!-- タブにIDを追加 -->
     <div class="tabs" id="itinerary-tabs" style="display: none;">
       <div class="tab active" id="tab-day1" onclick="switchTab(1)">1日目</div>
       <div class="tab" id="tab-day2" onclick="switchTab(2)">2日目</div>
@@ -219,7 +240,6 @@
               imgSrc = `https://drive.google.com/uc?export=view&id=${fileIdMatch[1]}`;
             }
           }
-          // 軽量化のため loading="lazy" を付与
           return `<img src="${imgSrc}" class="inline-image" loading="lazy" onclick="openImageModal('${imgSrc}')" alt="画像">`;
         }
         return `<a href="${url}" target="_blank" rel="noopener" style="word-break: break-all;">${url}</a>`;
@@ -253,7 +273,7 @@
         scheduleDates = {};
         
         parseItineraryCSV(csv);
-        updateTabsWithDates(); // タブの日付を更新
+        updateTabsWithDates();
         initFilters();
         scrollToCurrentTime();
       } else {
@@ -262,7 +282,7 @@
         document.getElementById('filter-section').style.display = 'none';
         document.getElementById('generic-container').style.display = 'block';
         
-        parseGenericCSV(csv, colWidths);
+        parseGenericCSV(csv, colWidths, sheet.sheetName);
         window.scrollTo(0, 0);
       }
     }
@@ -274,7 +294,7 @@
           if (scheduleDates[i]) {
             tab.innerText = `${scheduleDates[i].month}/${scheduleDates[i].date}`;
           } else {
-            tab.innerText = `${i}日目`; // 日付が取得できなかった場合のフォールバック
+            tab.innerText = `${i}日目`;
           }
         }
       }
@@ -353,7 +373,7 @@
       });
     }
 
-    function parseGenericCSV(text, colWidths) {
+    function parseGenericCSV(text, colWidths, sheetName) {
       const lines = parseCSVData(text);
       const container = document.getElementById('generic-container');
       container.innerHTML = '';
@@ -364,7 +384,9 @@
       }
 
       let colGroupHtml = '';
-      if (colWidths && colWidths.length > 0) {
+      const isAutoLayout = (sheetName === '役割詳細');
+
+      if (!isAutoLayout && colWidths && colWidths.length > 0) {
         const totalWidth = colWidths.reduce((sum, w) => sum + w, 0);
         colGroupHtml = '<colgroup>';
         colWidths.forEach(width => {
@@ -374,7 +396,8 @@
         colGroupHtml += '</colgroup>';
       }
       
-      let html = '<div class="table-responsive"><table class="generic-table">';
+      const tableClass = isAutoLayout ? 'generic-table auto-layout' : 'generic-table';
+      let html = `<div class="table-responsive"><table class="${tableClass}">`;
       html += colGroupHtml;
       
       lines.forEach((row, rowIndex) => {
@@ -483,6 +506,13 @@
       root.style.setProperty('--font-task-text', sizes[level].text);
       root.style.setProperty('--font-tab', sizes[level].tab);
       root.style.setProperty('--font-table', sizes[level].table);
+    }
+    
+    // スライダーを標準（値：3）に戻す処理
+    function resetFontSize() {
+      const slider = document.getElementById('font-slider');
+      slider.value = 3;
+      changeFontSize(3);
     }
 
     function initFilters() {
