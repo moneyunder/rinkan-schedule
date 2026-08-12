@@ -6,36 +6,54 @@
 <meta name="format-detection" content="telephone=no">
 <title>林間学校スタッフ行程表</title>
 <style>
+  /* CSS変数による文字サイズ管理 */
   :root {
     --font-time: 17px;
     --font-task-label: 12px;
     --font-task-text: 15px;
     --font-tab: 16px;
+    --font-table: 14px;
   }
-  body.text-small { --font-time: 15px; --font-task-label: 11px; --font-task-text: 13px; --font-tab: 14px; }
-  body.text-large { --font-time: 19px; --font-task-label: 13px; --font-task-text: 17px; --font-tab: 18px; }
+  
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; margin: 0; background-color: #f4f6f8; color: #333; -webkit-text-size-adjust: 100%; }
+  
+  /* ヘッダー */
   .header-container { position: sticky; top: 0; background: #fff; z-index: 10; box-shadow: 0 2px 5px rgba(0,0,0,0.08); }
-  .header-top { display: flex; justify-content: center; align-items: center; position: relative; padding: 12px 0 4px; }
-  .page-title { font-size: 18px; font-weight: bold; color: #0056b3; margin: 0; }
-  .settings-btn { position: absolute; right: 15px; background: none; border: none; font-size: 20px; cursor: pointer; padding: 5px; color: #555; -webkit-tap-highlight-color: transparent; }
+  .header-top { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; }
+  .page-title { font-size: 17px; font-weight: bold; color: #0056b3; margin: 0; flex: 1; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .hamburger-btn, .settings-btn { background: none; border: none; font-size: 20px; cursor: pointer; padding: 5px; color: #555; -webkit-tap-highlight-color: transparent; display: flex; align-items: center; justify-content: center; }
+  
+  /* サイドバー（ハンバーガーメニュー） */
+  .sidebar-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 100; display: none; opacity: 0; transition: opacity 0.3s ease; }
+  .sidebar-overlay.active { display: block; opacity: 1; }
+  .sidebar { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background: #fff; z-index: 101; box-shadow: 2px 0 5px rgba(0,0,0,0.1); transition: left 0.3s ease; overflow-y: auto; display: flex; flex-direction: column; }
+  .sidebar.active { left: 0; }
+  .sidebar-header { padding: 20px 15px; font-size: 18px; font-weight: bold; border-bottom: 1px solid #eee; color: #333; display: flex; justify-content: space-between; align-items: center; }
+  .sidebar-close { background: none; border: none; font-size: 24px; color: #999; cursor: pointer; padding: 0 5px; }
+  .sidebar-menu { list-style: none; padding: 0; margin: 0; }
+  .sidebar-menu li { padding: 15px 20px; border-bottom: 1px solid #f5f5f5; font-size: 15px; cursor: pointer; color: #333; transition: background 0.2s; }
+  .sidebar-menu li:hover { background-color: #f9f9f9; }
+  .sidebar-menu li.active { background-color: #e3f2fd; color: #0056b3; font-weight: bold; border-left: 4px solid #0056b3; padding-left: 16px; }
+
+  /* 設定パネル */
   .settings-panel { display: none; background: #f9f9f9; padding: 15px; border-top: 1px solid #eee; border-bottom: 1px solid #ddd; }
   .settings-panel.open { display: block; }
   .setting-section { margin-bottom: 18px; }
   .setting-section:last-child { margin-bottom: 0; }
   .setting-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
   .setting-title { font-size: 13px; font-weight: bold; color: #555; }
-  .font-size-controls { display: flex; gap: 10px; }
-  .font-btn { flex: 1; padding: 8px 0; text-align: center; background: #fff; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; font-weight: bold; color: #555; cursor: pointer; -webkit-tap-highlight-color: transparent; }
-  .font-btn.active { background: #0056b3; color: #fff; border-color: #0056b3; }
+  
+  /* 文字サイズスライダー */
+  .font-size-slider-container { display: flex; align-items: center; gap: 15px; padding: 5px 0; }
+  .font-size-slider-container input[type="range"] { flex: 1; height: 6px; -webkit-appearance: none; background: #ddd; border-radius: 3px; outline: none; }
+  .font-size-slider-container input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #0056b3; cursor: pointer; }
+  
   .reset-btn { background: #e0e0e0; border: none; padding: 5px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; color: #333; -webkit-tap-highlight-color: transparent; }
   .filter-container { display: flex; flex-wrap: wrap; gap: 8px; }
   .filter-chip { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; user-select: none; border: 1px solid transparent; opacity: 0.45; filter: grayscale(100%); transition: all 0.2s ease; -webkit-tap-highlight-color: transparent; }
   .filter-chip.active { opacity: 1; filter: grayscale(0%); border-color: currentColor; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
   
-  .sheet-selector-container { text-align: center; padding: 0 15px 10px; }
-  .sheet-selector { width: 100%; padding: 8px; font-size: 15px; border-radius: 6px; border: 1px solid #ccc; background-color: #f9f9f9; }
-
+  /* 行程表専用（タブとカード） */
   .tabs { display: flex; }
   .tab { flex: 1; padding: 12px 0; text-align: center; font-weight: bold; font-size: var(--font-tab); cursor: pointer; border-bottom: 3px solid transparent; color: #888; -webkit-tap-highlight-color: transparent; user-select: none; }
   .tab.active { border-bottom-color: #0056b3; color: #0056b3; }
@@ -47,37 +65,61 @@
   .role-row:last-child { margin-bottom: 0; }
   .role-label { padding: 4px 6px; border-radius: 4px; font-size: var(--font-task-label); font-weight: bold; margin-right: 10px; width: 75px; text-align: center; flex-shrink: 0; }
   .role-task { padding-top: 1px; line-height: 1.5; word-break: break-word; }
+  
+  /* 汎用シート用テーブル */
+  .generic-container { display: none; padding: 12px; }
+  .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; box-sizing: border-box; background: #fff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+  .generic-table { border-collapse: collapse; width: 100%; min-width: max-content; font-size: var(--font-table); }
+  .generic-table th, .generic-table td { border: 1px solid #eee; padding: 12px 15px; text-align: left; vertical-align: top; }
+  .generic-table th { background-color: #f4f6f8; font-weight: bold; color: #555; border-bottom: 2px solid #ddd; }
+  .generic-table tbody tr:nth-child(even) { background-color: #fafafa; }
+  
   .color-0 { background: #e3f2fd; color: #0d47a1; } .color-1 { background: #ffebee; color: #b71c1c; } .color-2 { background: #e8f5e9; color: #1b5e20; } .color-3 { background: #fff3e0; color: #e65100; } .color-4 { background: #f3e5f5; color: #4a148c; } .color-5 { background: #e0f2f1; color: #004d40; } .color-6 { background: #fce4ec; color: #880e4f; } .color-7 { background: #efebe9; color: #3e2723; } .color-8 { background: #e8eaf6; color: #1a237e; } .color-9 { background: #fff8e1; color: #ff6f00; }
-  #loading { text-align: center; padding: 20px; font-size: 16px; color: #666; }
-  #error-message { color: #b71c1c; text-align: center; padding: 20px; font-size: 15px; display: none; margin: 0 15px; background: #ffebee; border-radius: 8px; }
-  #debug-info { font-size: 11px; color: #666; margin-top: 10px; text-align: left; }
+  
+  #loading { text-align: center; padding: 30px 20px; font-size: 16px; color: #666; }
+  #error-message { color: #b71c1c; text-align: center; padding: 20px; font-size: 15px; display: none; margin: 15px; background: #ffebee; border-radius: 8px; }
 </style>
 </head>
 <body>
 
+  <!-- サイドバー -->
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      シート一覧
+      <button class="sidebar-close" onclick="toggleSidebar()">&times;</button>
+    </div>
+    <ul class="sidebar-menu" id="sidebar-menu"></ul>
+  </div>
+
   <div class="header-container">
     <div class="header-top">
-      <h1 class="page-title">林間学校スタッフ行程表</h1>
-      <button class="settings-btn" onclick="toggleSettings()">⚙️</button>
-    </div>
-
-    <!-- シート切り替えメニュー -->
-    <div class="sheet-selector-container" id="sheet-selector-container" style="display: none;">
-      <select id="sheet-selector" class="sheet-selector" onchange="changeSheet()"></select>
+      <!-- ハンバーガーアイコン -->
+      <button class="hamburger-btn" onclick="toggleSidebar()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+      </button>
+      
+      <h1 class="page-title" id="page-title">読込中...</h1>
+      
+      <!-- シンプルな歯車アイコン -->
+      <button class="settings-btn" onclick="toggleSettings()">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+      </button>
     </div>
     
+    <!-- 設定パネル -->
     <div class="settings-panel" id="settings-panel">
+      <!-- 文字サイズ（横スクロール） -->
       <div class="setting-section">
-        <div class="setting-header">
-          <span class="setting-title">文字サイズ</span>
-        </div>
-        <div class="font-size-controls">
-          <button class="font-btn" id="btn-font-small" onclick="setFontSize('small')">小</button>
-          <button class="font-btn active" id="btn-font-medium" onclick="setFontSize('medium')">標準</button>
-          <button class="font-btn" id="btn-font-large" onclick="setFontSize('large')">大</button>
+        <div class="setting-header"><span class="setting-title">文字サイズ</span></div>
+        <div class="font-size-slider-container">
+          <span style="font-size: 12px; color: #666;">小</span>
+          <input type="range" id="font-slider" min="1" max="5" step="1" value="3" oninput="changeFontSize(this.value)">
+          <span style="font-size: 18px; color: #666;">大</span>
         </div>
       </div>
       
+      <!-- 担当絞り込み（行程表シートのみ表示） -->
       <div class="setting-section" id="filter-section" style="display: none;">
         <div class="setting-header">
           <span class="setting-title">表示する担当 (タップでON/OFF)</span>
@@ -87,7 +129,8 @@
       </div>
     </div>
 
-    <div class="tabs">
+    <!-- 行程表用タブ -->
+    <div class="tabs" id="itinerary-tabs" style="display: none;">
       <div class="tab active" onclick="switchTab(1)">1日目</div>
       <div class="tab" onclick="switchTab(2)">2日目</div>
       <div class="tab" onclick="switchTab(3)">3日目</div>
@@ -97,63 +140,60 @@
   <div id="loading">パスワードを確認しています...</div>
   <div id="error-message"></div>
   
-  <div id="day1" class="day-content active"></div>
-  <div id="day2" class="day-content"></div>
-  <div id="day3" class="day-content"></div>
+  <!-- 行程表コンテナ -->
+  <div id="itinerary-container" style="display: none;">
+    <div id="day1" class="day-content active"></div>
+    <div id="day2" class="day-content"></div>
+    <div id="day3" class="day-content"></div>
+  </div>
+
+  <!-- 汎用テーブルコンテナ -->
+  <div id="generic-container" class="generic-container"></div>
 
   <script>
-    // 指定されたGASのURL
     const gasUrl = 'https://script.google.com/macros/s/AKfycbwgnfZN3l9qw8sZ1ti-QEhvC2ag0rmHdorEYdLQlaDENf0oIBWusnuFlT-eENLt_ZGd/exec';
-
+    
     let roleHeaders = [];
     let sheetsData = []; 
 
     async function loadData() {
-      const pass = prompt("行程表を見るためのパスワードを入力してください");
+      const pass = prompt("閲覧パスワードを入力してください");
       if (!pass) {
         document.getElementById('loading').innerText = "キャンセルされました。ページを再読み込みしてください。";
+        document.getElementById('page-title').innerText = "アクセス不可";
         return;
       }
 
       try {
         const response = await fetch(`${gasUrl}?key=${pass}`, { cache: "no-store" });
-        if (!response.ok) {
-          throw new Error(`通信エラー: サーバーが応答しませんでした (HTTP ${response.status})`);
-        }
-        
+        if (!response.ok) throw new Error(`通信エラー`);
         const text = await response.text();
+        if (text === "error") throw new Error("パスワードが間違っています。");
         
-        if (text === "error") {
-          throw new Error("パスワードが間違っています。");
-        }
-        
-        try {
-          sheetsData = JSON.parse(text);
-        } catch (e) {
-          throw new Error("データの解析に失敗しました。GASのコードが正しく更新されていない可能性があります。");
-        }
-        
-        if (sheetsData.length === 0) {
-          throw new Error("シートのデータが見つかりませんでした。");
-        }
+        try { sheetsData = JSON.parse(text); } catch (e) { throw new Error("データ解析エラー"); }
+        if (sheetsData.length === 0) throw new Error("シートが見つかりません。");
 
-        const selector = document.getElementById('sheet-selector');
-        selector.innerHTML = '';
+        // サイドバーの生成（スプレッドシートの左から右の順）
+        const menuContainer = document.getElementById('sidebar-menu');
+        menuContainer.innerHTML = '';
         
-        // 「行程表」シートを最初（インデックス0）にするための並び替え処理
         let targetIndex = 0;
         sheetsData.forEach((sheet, index) => {
-          const option = document.createElement('option');
-          option.value = index;
-          option.text = sheet.sheetName; 
-          selector.appendChild(option);
+          const li = document.createElement('li');
+          li.innerText = sheet.sheetName;
+          li.onclick = () => { selectSheet(index, li); };
+          menuContainer.appendChild(li);
+          
           if (sheet.sheetName === "行程表") {
             targetIndex = index;
-            option.selected = true;
+            li.classList.add('active');
           }
         });
         
-        document.getElementById('sheet-selector-container').style.display = 'block';
+        // メニューに行程表が無かった場合は一番左のシートを選択
+        if (targetIndex === 0 && sheetsData[0].sheetName !== "行程表") {
+          menuContainer.firstChild.classList.add('active');
+        }
 
         renderSheet(targetIndex);
         document.getElementById('loading').style.display = 'none';
@@ -161,226 +201,223 @@
       } catch (error) {
         document.getElementById('loading').style.display = 'none';
         const errorEl = document.getElementById('error-message');
-        errorEl.innerHTML = `<strong>エラーが発生しました</strong><br>${error.message}<br><div id="debug-info">詳細: ${error}</div><br>ページを再読み込みしてやり直してください。`;
+        errorEl.innerHTML = `<strong>エラー</strong><br>${error.message}<br>ページを再読み込みしてください。`;
         errorEl.style.display = 'block';
+        document.getElementById('page-title').innerText = "エラー";
       }
     }
 
-    function changeSheet() {
-      const selector = document.getElementById('sheet-selector');
-      const index = parseInt(selector.value, 10);
+    // サイドバーからのシート選択処理
+    function selectSheet(index, liElement) {
+      document.querySelectorAll('.sidebar-menu li').forEach(el => el.classList.remove('active'));
+      liElement.classList.add('active');
       renderSheet(index);
+      toggleSidebar(); // 選択後にサイドバーを閉じる
     }
 
     function renderSheet(index) {
-      document.getElementById('day1').innerHTML = '';
-      document.getElementById('day2').innerHTML = '';
-      document.getElementById('day3').innerHTML = '';
-      document.getElementById('filter-container').innerHTML = '';
-      document.getElementById('filter-section').style.display = 'none';
-      roleHeaders = [];
+      const sheet = sheetsData[index];
+      const csv = sheet.csvData;
       
-      switchTab(1);
-
-      const csv = sheetsData[index].csvData;
-      const cardCount = parseCSV(csv);
+      // タイトル変更
+      document.getElementById('page-title').innerText = sheet.sheetName;
       
-      if (cardCount === 0) {
-        document.getElementById('day1').innerHTML = '<div style="padding: 20px; text-align: center; color: #666;">このシートは行程表形式（「○月○日」や「時間」の行）ではないため、表示できません。</div>';
-      } else {
+      if (sheet.sheetName === "行程表") {
+        // --- 行程表モード ---
+        document.getElementById('itinerary-container').style.display = 'block';
+        document.getElementById('itinerary-tabs').style.display = 'flex';
+        document.getElementById('filter-section').style.display = 'block';
+        document.getElementById('generic-container').style.display = 'none';
+        
+        document.getElementById('day1').innerHTML = '';
+        document.getElementById('day2').innerHTML = '';
+        document.getElementById('day3').innerHTML = '';
+        roleHeaders = [];
+        switchTab(1);
+        
+        parseItineraryCSV(csv);
         initFilters();
+      } else {
+        // --- 汎用テーブルモード ---
+        document.getElementById('itinerary-container').style.display = 'none';
+        document.getElementById('itinerary-tabs').style.display = 'none';
+        document.getElementById('filter-section').style.display = 'none';
+        document.getElementById('generic-container').style.display = 'block';
+        
+        parseGenericCSV(csv);
       }
+      
+      window.scrollTo(0, 0);
     }
 
+    // CSV共通パース処理
     function parseCSVData(text) {
       const rows = [];
       let currentRow = [];
       let currentVal = '';
       let inQuotes = false;
-
       for (let i = 0; i < text.length; i++) {
         const char = text[i];
         const nextChar = text[i + 1];
-
         if (char === '"') {
-          if (inQuotes && nextChar === '"') {
-            currentVal += '"';
-            i++;
-          } else {
-            inQuotes = !inQuotes;
-          }
+          if (inQuotes && nextChar === '"') { currentVal += '"'; i++; } else { inQuotes = !inQuotes; }
         } else if (char === ',' && !inQuotes) {
-          currentRow.push(currentVal);
-          currentVal = '';
+          currentRow.push(currentVal); currentVal = '';
         } else if ((char === '\n' || char === '\r') && !inQuotes) {
           if (char === '\r' && nextChar === '\n') i++;
-          currentRow.push(currentVal);
-          rows.push(currentRow);
-          currentRow = [];
-          currentVal = '';
+          currentRow.push(currentVal); rows.push(currentRow); currentRow = []; currentVal = '';
         } else {
           currentVal += char;
         }
       }
-      if (currentVal !== '' || currentRow.length > 0) {
-        currentRow.push(currentVal);
-        rows.push(currentRow);
-      }
+      if (currentVal !== '' || currentRow.length > 0) { currentRow.push(currentVal); rows.push(currentRow); }
       return rows;
     }
 
-    function parseCSV(text) {
+    // 行程表用パース
+    function parseItineraryCSV(text) {
       const lines = parseCSVData(text);
       let currentDay = 0;
-      let generatedCards = 0;
-
       lines.forEach(row => {
         if (row.length === 0 || !row[0]) return;
         const colA = row[0].trim();
         if (colA === '') return;
-
+        
         if (colA === '時間') {
           roleHeaders = [];
           for (let i = 2; i < row.length; i++) {
-            if (row[i].trim() !== '') {
-              roleHeaders.push(row[i].trim());
-            }
+            if (row[i].trim() !== '') roleHeaders.push(row[i].trim());
           }
           return;
         }
-
-        if (colA.includes('月') && colA.includes('日') && !colA.includes(':')) {
-          currentDay++;
-          return;
-        }
-
+        if (colA.includes('月') && colA.includes('日') && !colA.includes(':')) { currentDay++; return; }
         if (currentDay === 0 || currentDay > 3 || roleHeaders.length === 0) return;
 
-        const time = colA;
-        const activity = row[1] ? row[1].trim() : '';
-        const timeActivity = activity ? `${time} ${activity}` : time;
-        
+        const timeActivity = (row[1] && row[1].trim() !== '') ? `${colA} ${row[1].trim()}` : colA;
         const tasks = [];
-        for (let i = 0; i < roleHeaders.length; i++) {
-          tasks.push(row[i + 2] ? row[i + 2].trim() : '');
-        }
-
+        for (let i = 0; i < roleHeaders.length; i++) tasks.push(row[i + 2] ? row[i + 2].trim() : '');
         if (tasks.every(t => t === '')) return;
 
         let cardHtml = `<div class="card"><div class="time-activity">${timeActivity}</div>`;
-        
         tasks.forEach((task, index) => {
           if (task && task !== '') {
             const colorClass = `color-${index % 10}`;
-            cardHtml += `
-              <div class="role-row" data-role-index="${index}">
-                <span class="role-label ${colorClass}">${roleHeaders[index]}</span>
-                <span class="role-task">${task.replace(/\r?\n/g, '<br>')}</span>
-              </div>`;
+            cardHtml += `<div class="role-row" data-role-index="${index}"><span class="role-label ${colorClass}">${roleHeaders[index]}</span><span class="role-task">${task.replace(/\r?\n/g, '<br>')}</span></div>`;
           }
         });
-        
         cardHtml += `</div>`;
         
         const container = document.getElementById('day' + currentDay);
-        if (container) {
-          container.insertAdjacentHTML('beforeend', cardHtml);
-          generatedCards++;
+        if (container) container.insertAdjacentHTML('beforeend', cardHtml);
+      });
+    }
+
+    // 汎用テーブル用パース（行程表以外のシート）
+    function parseGenericCSV(text) {
+      const lines = parseCSVData(text);
+      const container = document.getElementById('generic-container');
+      container.innerHTML = '';
+      
+      // 全て空の行を除去
+      const validLines = lines.filter(row => !row.every(cell => cell.trim() === ''));
+      if (validLines.length === 0) {
+        container.innerHTML = '<div style="padding: 20px; text-align: center; color: #666;">データがありません。</div>';
+        return;
+      }
+      
+      let html = '<div class="table-responsive"><table class="generic-table">';
+      validLines.forEach((row, rowIndex) => {
+        if (rowIndex === 0) {
+          html += '<thead><tr>';
+          row.forEach(cell => { html += `<th>${cell.replace(/\r?\n/g, '<br>')}</th>`; });
+          html += '</tr></thead><tbody>';
+        } else {
+          html += '<tr>';
+          row.forEach(cell => { html += `<td>${cell.replace(/\r?\n/g, '<br>')}</td>`; });
+          html += '</tr>';
         }
       });
-      
-      return generatedCards;
+      html += '</tbody></table></div>';
+      container.innerHTML = html;
     }
 
-    function toggleSettings() {
-      const panel = document.getElementById('settings-panel');
-      panel.classList.toggle('open');
-    }
-
-    function setFontSize(size) {
-      document.body.classList.remove('text-small', 'text-large');
-      document.querySelectorAll('.font-btn').forEach(btn => btn.classList.remove('active'));
-      
-      if (size === 'small') {
-        document.body.classList.add('text-small');
-        document.getElementById('btn-font-small').classList.add('active');
-      } else if (size === 'large') {
-        document.body.classList.add('text-large');
-        document.getElementById('btn-font-large').classList.add('active');
+    // UI関連の関数
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+      if (sidebar.classList.contains('active')) {
+        sidebar.classList.remove('active');
+        setTimeout(() => overlay.classList.remove('active'), 10);
       } else {
-        document.getElementById('btn-font-medium').classList.add('active');
+        overlay.classList.add('active');
+        sidebar.classList.add('active');
       }
     }
 
+    function toggleSettings() {
+      document.getElementById('settings-panel').classList.toggle('open');
+    }
+
+    // 文字サイズのスライダー変更
+    function changeFontSize(level) {
+      const sizes = {
+        1: { time: '13px', label: '10px', text: '12px', tab: '12px', table: '11px' },
+        2: { time: '15px', label: '11px', text: '13px', tab: '14px', table: '12px' },
+        3: { time: '17px', label: '12px', text: '15px', tab: '16px', table: '14px' },
+        4: { time: '19px', label: '13px', text: '17px', tab: '18px', table: '16px' },
+        5: { time: '21px', label: '14px', text: '19px', tab: '20px', table: '18px' }
+      };
+      const root = document.documentElement;
+      root.style.setProperty('--font-time', sizes[level].time);
+      root.style.setProperty('--font-task-label', sizes[level].label);
+      root.style.setProperty('--font-task-text', sizes[level].text);
+      root.style.setProperty('--font-tab', sizes[level].tab);
+      root.style.setProperty('--font-table', sizes[level].table);
+    }
+
+    // フィルター関連（行程表用）
     function initFilters() {
       const filterSection = document.getElementById('filter-section');
       const filterContainer = document.getElementById('filter-container');
       filterContainer.innerHTML = '';
-      
       if (roleHeaders.length === 0) return;
       
       roleHeaders.forEach((header, index) => {
         const chip = document.createElement('div');
-        const colorClass = `color-${index % 10}`;
-        chip.className = `filter-chip ${colorClass} active`;
+        chip.className = `filter-chip color-${index % 10} active`;
         chip.dataset.roleIndex = index;
         chip.innerText = header;
-        
-        chip.onclick = () => {
-          chip.classList.toggle('active');
-          applyFilters();
-        };
-        
+        chip.onclick = () => { chip.classList.toggle('active'); applyFilters(); };
         filterContainer.appendChild(chip);
       });
-      
-      filterSection.style.display = 'block';
     }
 
     function resetFilters() {
-      const chips = document.querySelectorAll('.filter-chip');
-      chips.forEach(chip => chip.classList.add('active'));
+      document.querySelectorAll('.filter-chip').forEach(chip => chip.classList.add('active'));
       applyFilters();
     }
 
     function applyFilters() {
-      const activeChips = document.querySelectorAll('.filter-chip.active');
-      const activeIndices = Array.from(activeChips).map(chip => chip.dataset.roleIndex);
-      
-      const cards = document.querySelectorAll('.card');
-      
-      cards.forEach(card => {
-        let visibleRolesCount = 0;
-        const roleRows = card.querySelectorAll('.role-row');
-        
-        roleRows.forEach(row => {
-          const index = row.dataset.roleIndex;
-          if (activeIndices.includes(index)) {
-            row.style.display = 'flex';
-            visibleRolesCount++;
+      const activeIndices = Array.from(document.querySelectorAll('.filter-chip.active')).map(c => c.dataset.roleIndex);
+      document.querySelectorAll('.card').forEach(card => {
+        let visibleCount = 0;
+        card.querySelectorAll('.role-row').forEach(row => {
+          if (activeIndices.includes(row.dataset.roleIndex)) {
+            row.style.display = 'flex'; visibleCount++;
           } else {
             row.style.display = 'none';
           }
         });
-        
-        if (visibleRolesCount === 0) {
-          card.style.display = 'none';
-        } else {
-          card.style.display = 'block';
-        }
+        card.style.display = visibleCount === 0 ? 'none' : 'block';
       });
     }
 
     function switchTab(day) {
-      document.querySelectorAll('.tab').forEach((el, index) => {
-        el.classList.toggle('active', index + 1 === day);
-      });
-      document.querySelectorAll('.day-content').forEach((el, index) => {
-        el.classList.toggle('active', index + 1 === day);
-      });
-      window.scrollTo(0, 0);
+      document.querySelectorAll('#itinerary-tabs .tab').forEach((el, index) => el.classList.toggle('active', index + 1 === day));
+      document.querySelectorAll('.day-content').forEach((el, index) => el.classList.toggle('active', index + 1 === day));
     }
 
+    // 初期化実行
     loadData();
   </script>
 </body>
