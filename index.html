@@ -33,7 +33,6 @@
   .filter-chip { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; user-select: none; border: 1px solid transparent; opacity: 0.45; filter: grayscale(100%); transition: all 0.2s ease; -webkit-tap-highlight-color: transparent; }
   .filter-chip.active { opacity: 1; filter: grayscale(0%); border-color: currentColor; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
   
-  /* シート切り替えプルダウン */
   .sheet-selector-container { text-align: center; padding: 0 15px 10px; }
   .sheet-selector { width: 100%; padding: 8px; font-size: 15px; border-radius: 6px; border: 1px solid #ccc; background-color: #f9f9f9; }
 
@@ -50,7 +49,8 @@
   .role-task { padding-top: 1px; line-height: 1.5; word-break: break-word; }
   .color-0 { background: #e3f2fd; color: #0d47a1; } .color-1 { background: #ffebee; color: #b71c1c; } .color-2 { background: #e8f5e9; color: #1b5e20; } .color-3 { background: #fff3e0; color: #e65100; } .color-4 { background: #f3e5f5; color: #4a148c; } .color-5 { background: #e0f2f1; color: #004d40; } .color-6 { background: #fce4ec; color: #880e4f; } .color-7 { background: #efebe9; color: #3e2723; } .color-8 { background: #e8eaf6; color: #1a237e; } .color-9 { background: #fff8e1; color: #ff6f00; }
   #loading { text-align: center; padding: 20px; font-size: 16px; color: #666; }
-  #error-message { color: #b71c1c; text-align: center; padding: 20px; font-size: 15px; display: none; }
+  #error-message { color: #b71c1c; text-align: center; padding: 20px; font-size: 15px; display: none; margin: 0 15px; background: #ffebee; border-radius: 8px; }
+  #debug-info { font-size: 11px; color: #666; margin-top: 10px; text-align: left; }
 </style>
 </head>
 <body>
@@ -94,7 +94,7 @@
     </div>
   </div>
 
-  <div id="loading">合言葉を確認しています...</div>
+  <div id="loading">パスワードを確認しています...</div>
   <div id="error-message"></div>
   
   <div id="day1" class="day-content active"></div>
@@ -102,14 +102,14 @@
   <div id="day3" class="day-content"></div>
 
   <script>
-    // 指定されたGASのURLを設定
+    // 指定されたGASのURL
     const gasUrl = 'https://script.google.com/macros/s/AKfycbwgnfZN3l9qw8sZ1ti-QEhvC2ag0rmHdorEYdLQlaDENf0oIBWusnuFlT-eENLt_ZGd/exec';
 
     let roleHeaders = [];
     let sheetsData = []; 
 
     async function loadData() {
-      const pass = prompt("行程表を見るための合言葉を入力してください");
+      const pass = prompt("行程表を見るためのパスワードを入力してください");
       if (!pass) {
         document.getElementById('loading').innerText = "キャンセルされました。ページを再読み込みしてください。";
         return;
@@ -117,40 +117,51 @@
 
       try {
         const response = await fetch(`${gasUrl}?key=${pass}`, { cache: "no-store" });
+        if (!response.ok) {
+          throw new Error(`通信エラー: サーバーが応答しませんでした (HTTP ${response.status})`);
+        }
+        
         const text = await response.text();
         
         if (text === "error") {
-          throw new Error("password_error");
+          throw new Error("パスワードが間違っています。");
         }
         
-        sheetsData = JSON.parse(text);
+        try {
+          sheetsData = JSON.parse(text);
+        } catch (e) {
+          throw new Error("データの解析に失敗しました。GASのコードが正しく更新されていない可能性があります。");
+        }
         
         if (sheetsData.length === 0) {
-          throw new Error("no_data");
+          throw new Error("シートのデータが見つかりませんでした。");
         }
 
         const selector = document.getElementById('sheet-selector');
         selector.innerHTML = '';
+        
+        // 「行程表」シートを最初（インデックス0）にするための並び替え処理
+        let targetIndex = 0;
         sheetsData.forEach((sheet, index) => {
           const option = document.createElement('option');
           option.value = index;
           option.text = sheet.sheetName; 
           selector.appendChild(option);
+          if (sheet.sheetName === "行程表") {
+            targetIndex = index;
+            option.selected = true;
+          }
         });
         
         document.getElementById('sheet-selector-container').style.display = 'block';
 
-        renderSheet(0);
+        renderSheet(targetIndex);
         document.getElementById('loading').style.display = 'none';
 
       } catch (error) {
         document.getElementById('loading').style.display = 'none';
         const errorEl = document.getElementById('error-message');
-        if (error.message === "password_error") {
-          errorEl.innerHTML = `合言葉が違います。<br>ページを再読み込みしてやり直してください。`;
-        } else {
-          errorEl.innerHTML = `データの読み込みに失敗しました。<br>通信環境をご確認の上、ページを再読み込みしてください。`;
-        }
+        errorEl.innerHTML = `<strong>エラーが発生しました</strong><br>${error.message}<br><div id="debug-info">詳細: ${error}</div><br>ページを再読み込みしてやり直してください。`;
         errorEl.style.display = 'block';
       }
     }
@@ -172,8 +183,13 @@
       switchTab(1);
 
       const csv = sheetsData[index].csvData;
-      parseCSV(csv);
-      initFilters();
+      const cardCount = parseCSV(csv);
+      
+      if (cardCount === 0) {
+        document.getElementById('day1').innerHTML = '<div style="padding: 20px; text-align: center; color: #666;">このシートは行程表形式（「○月○日」や「時間」の行）ではないため、表示できません。</div>';
+      } else {
+        initFilters();
+      }
     }
 
     function parseCSVData(text) {
@@ -216,6 +232,7 @@
     function parseCSV(text) {
       const lines = parseCSVData(text);
       let currentDay = 0;
+      let generatedCards = 0;
 
       lines.forEach(row => {
         if (row.length === 0 || !row[0]) return;
@@ -268,8 +285,11 @@
         const container = document.getElementById('day' + currentDay);
         if (container) {
           container.insertAdjacentHTML('beforeend', cardHtml);
+          generatedCards++;
         }
       });
+      
+      return generatedCards;
     }
 
     function toggleSettings() {
