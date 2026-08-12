@@ -7,22 +7,16 @@
 <title>林間学校スタッフ行程表</title>
 <style>
   :root {
-    --font-time: 17px;
-    --font-task-label: 12px;
-    --font-task-text: 15px;
-    --font-tab: 16px;
-    --font-table: 13px;
+    --font-time: 17px; --font-task-label: 12px; --font-task-text: 15px;
+    --font-tab: 16px; --font-table: 13px;
   }
-  
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; margin: 0; background-color: #f4f6f8; color: #333; -webkit-text-size-adjust: 100%; }
   
-  /* ヘッダー */
   .header-container { position: sticky; top: 0; background: #fff; z-index: 10; box-shadow: 0 2px 5px rgba(0,0,0,0.08); }
   .header-top { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; }
   .page-title { font-size: 17px; font-weight: bold; color: #0056b3; margin: 0; flex: 1; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .hamburger-btn, .settings-btn { background: none; border: none; font-size: 20px; cursor: pointer; padding: 5px; color: #555; -webkit-tap-highlight-color: transparent; display: flex; align-items: center; justify-content: center; }
   
-  /* サイドバー */
   .sidebar-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 100; display: none; opacity: 0; transition: opacity 0.3s ease; }
   .sidebar-overlay.active { display: block; opacity: 1; }
   .sidebar { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background: #fff; z-index: 101; box-shadow: 2px 0 5px rgba(0,0,0,0.1); transition: left 0.3s ease; overflow-y: auto; display: flex; flex-direction: column; }
@@ -34,37 +28,33 @@
   .sidebar-menu li:hover { background-color: #f9f9f9; }
   .sidebar-menu li.active { background-color: #e3f2fd; color: #0056b3; font-weight: bold; border-left: 4px solid #0056b3; padding-left: 16px; }
 
-  /* 設定パネル */
   .settings-panel { display: none; background: #f9f9f9; padding: 15px; border-top: 1px solid #eee; border-bottom: 1px solid #ddd; }
   .settings-panel.open { display: block; }
   .setting-section { margin-bottom: 18px; }
   .setting-section:last-child { margin-bottom: 0; }
   .setting-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
   .setting-title { font-size: 13px; font-weight: bold; color: #555; }
-  
   .font-size-slider-container { display: flex; align-items: center; gap: 15px; padding: 5px 0; }
   .font-size-slider-container input[type="range"] { flex: 1; height: 6px; -webkit-appearance: none; background: #ddd; border-radius: 3px; outline: none; }
   .font-size-slider-container input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #0056b3; cursor: pointer; }
-  
   .reset-btn { background: #e0e0e0; border: none; padding: 5px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; color: #333; -webkit-tap-highlight-color: transparent; }
   .filter-container { display: flex; flex-wrap: wrap; gap: 8px; }
-  .filter-chip { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; user-select: none; border: 1px solid transparent; opacity: 0.45; filter: grayscale(100%); transition: all 0.2s ease; -webkit-tap-highlight-color: transparent; }
+  .filter-chip { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; user-select: none; border: 1px solid transparent; opacity: 0.45; filter: grayscale(100%); transition: all 0.2s ease; }
   .filter-chip.active { opacity: 1; filter: grayscale(0%); border-color: currentColor; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
   
-  /* 行程表専用 */
   .tabs { display: flex; }
-  .tab { flex: 1; padding: 12px 0; text-align: center; font-weight: bold; font-size: var(--font-tab); cursor: pointer; border-bottom: 3px solid transparent; color: #888; -webkit-tap-highlight-color: transparent; user-select: none; }
+  .tab { flex: 1; padding: 12px 0; text-align: center; font-weight: bold; font-size: var(--font-tab); cursor: pointer; border-bottom: 3px solid transparent; color: #888; user-select: none; }
   .tab.active { border-bottom-color: #0056b3; color: #0056b3; }
-  .day-content { display: none; padding: 12px; }
+  .day-content { display: none; padding: 12px; scroll-margin-top: 130px; }
   .day-content.active { display: block; }
-  .card { background: #fff; border-radius: 8px; padding: 15px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+  .card { background: #fff; border-radius: 8px; padding: 15px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); scroll-margin-top: 140px; transition: background-color 0.5s; }
+  .card.highlight { background-color: #fffde7; border-left: 4px solid #fbc02d; }
   .time-activity { font-size: var(--font-time); font-weight: bold; border-bottom: 1px solid #eee; padding-bottom: 8px; margin-bottom: 8px; color: #222; }
   .role-row { display: flex; margin-bottom: 8px; font-size: var(--font-task-text); align-items: flex-start; }
   .role-row:last-child { margin-bottom: 0; }
   .role-label { padding: 4px 6px; border-radius: 4px; font-size: var(--font-task-label); font-weight: bold; margin-right: 10px; width: 75px; text-align: center; flex-shrink: 0; }
   .role-task { padding-top: 1px; line-height: 1.5; word-break: break-word; }
   
-  /* 汎用シート用テーブル（横スクロールなし・幅自動比率） */
   .generic-container { display: none; padding: 12px; }
   .table-responsive { width: 100%; box-sizing: border-box; background: #fff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); overflow: hidden; }
   .generic-table { border-collapse: collapse; width: 100%; table-layout: fixed; font-size: var(--font-table); }
@@ -72,6 +62,12 @@
   .generic-table th { background-color: #f4f6f8; font-weight: bold; color: #555; border-bottom: 2px solid #ddd; }
   .generic-table tbody tr:nth-child(even) { background-color: #fafafa; }
   
+  .inline-image { max-width: 100%; max-height: 200px; border-radius: 6px; margin-top: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.2); cursor: pointer; display: block; }
+  .image-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center; }
+  .image-modal.active { display: flex; }
+  .image-modal img { max-width: 95%; max-height: 95%; object-fit: contain; }
+  .modal-close { position: absolute; top: 20px; right: 20px; color: #fff; font-size: 30px; cursor: pointer; border: none; background: none; }
+
   .color-0 { background: #e3f2fd; color: #0d47a1; } .color-1 { background: #ffebee; color: #b71c1c; } .color-2 { background: #e8f5e9; color: #1b5e20; } .color-3 { background: #fff3e0; color: #e65100; } .color-4 { background: #f3e5f5; color: #4a148c; } .color-5 { background: #e0f2f1; color: #004d40; } .color-6 { background: #fce4ec; color: #880e4f; } .color-7 { background: #efebe9; color: #3e2723; } .color-8 { background: #e8eaf6; color: #1a237e; } .color-9 { background: #fff8e1; color: #ff6f00; }
   
   #loading { text-align: center; padding: 30px 20px; font-size: 16px; color: #666; }
@@ -80,10 +76,8 @@
 </head>
 <body>
 
-  <!-- サイドバー（ハンバーガーメニュー） -->
   <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
   <div class="sidebar" id="sidebar">
-    <!-- タイトル変更 -->
     <div class="sidebar-header">
       関西林間2026
       <button class="sidebar-close" onclick="toggleSidebar()">&times;</button>
@@ -96,9 +90,7 @@
       <button class="hamburger-btn" onclick="toggleSidebar()">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
       </button>
-      
       <h1 class="page-title" id="page-title">読込中...</h1>
-      
       <button class="settings-btn" onclick="toggleSettings()">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
       </button>
@@ -113,7 +105,6 @@
           <span style="font-size: 18px; color: #666;">大</span>
         </div>
       </div>
-      
       <div class="setting-section" id="filter-section" style="display: none;">
         <div class="setting-header">
           <span class="setting-title">表示する担当 (タップでON/OFF)</span>
@@ -130,7 +121,7 @@
     </div>
   </div>
 
-  <div id="loading">パスワードを確認しています...</div>
+  <div id="loading">データを確認しています...</div>
   <div id="error-message"></div>
   
   <div id="itinerary-container" style="display: none;">
@@ -138,31 +129,51 @@
     <div id="day2" class="day-content"></div>
     <div id="day3" class="day-content"></div>
   </div>
-
   <div id="generic-container" class="generic-container"></div>
+
+  <!-- 画像モーダル -->
+  <div id="image-modal" class="image-modal" onclick="closeImageModal()">
+    <button class="modal-close">&times;</button>
+    <img id="modal-image" src="" alt="拡大画像">
+  </div>
 
   <script>
     const gasUrl = 'https://script.google.com/macros/s/AKfycbwgnfZN3l9qw8sZ1ti-QEhvC2ag0rmHdorEYdLQlaDENf0oIBWusnuFlT-eENLt_ZGd/exec';
     
     let roleHeaders = [];
     let sheetsData = []; 
+    let scheduleDates = {}; 
 
     async function loadData() {
-      const pass = prompt("閲覧パスワードを入力してください");
-      if (!pass) {
-        document.getElementById('loading').innerText = "キャンセルされました。ページを再読み込みしてください。";
-        document.getElementById('page-title').innerText = "アクセス不可";
-        return;
+      const storageKeyPass = 'rinkan2026_pass';
+      const storageKeyTime = 'rinkan2026_time';
+      let pass = localStorage.getItem(storageKeyPass);
+      const savedTime = localStorage.getItem(storageKeyTime);
+      const now = Date.now();
+      
+      if (!pass || !savedTime || (now - savedTime) > 12 * 60 * 60 * 1000) {
+        pass = prompt("閲覧パスワードを入力してください");
+        if (!pass) {
+          document.getElementById('loading').innerText = "キャンセルされました。";
+          document.getElementById('page-title').innerText = "アクセス不可";
+          return;
+        }
       }
 
       try {
         const response = await fetch(`${gasUrl}?key=${pass}`, { cache: "no-store" });
         if (!response.ok) throw new Error(`通信エラー`);
         const text = await response.text();
-        if (text === "error") throw new Error("パスワードが間違っています。");
+        if (text === "error") {
+          localStorage.removeItem(storageKeyPass);
+          throw new Error("パスワードが間違っています。");
+        }
         
         try { sheetsData = JSON.parse(text); } catch (e) { throw new Error("データ解析エラー: GASコードが新バージョンとしてデプロイされていない可能性があります。"); }
         if (sheetsData.length === 0) throw new Error("シートが見つかりません。");
+
+        localStorage.setItem(storageKeyPass, pass);
+        localStorage.setItem(storageKeyTime, now);
 
         const menuContainer = document.getElementById('sidebar-menu');
         menuContainer.innerHTML = '';
@@ -196,6 +207,25 @@
       }
     }
 
+    function formatCellContent(text) {
+      let formatted = text.replace(/\r?\n/g, '<br>');
+      const urlRegex = /(https?:\/\/[^\s]+)/g;
+      formatted = formatted.replace(urlRegex, function(url) {
+        if (url.match(/\.(jpeg|jpg|gif|png)$/i) || url.includes('drive.google.com/file/d/')) {
+          let imgSrc = url;
+          if (url.includes('drive.google.com/file/d/')) {
+            const fileIdMatch = url.match(/d\/([a-zA-Z0-9_-]+)/);
+            if (fileIdMatch) {
+              imgSrc = `https://drive.google.com/uc?export=view&id=${fileIdMatch[1]}`;
+            }
+          }
+          return `<img src="${imgSrc}" class="inline-image" onclick="openImageModal('${imgSrc}')" alt="画像">`;
+        }
+        return `<a href="${url}" target="_blank" rel="noopener" style="word-break: break-all;">${url}</a>`;
+      });
+      return formatted;
+    }
+
     function selectSheet(index, liElement) {
       document.querySelectorAll('.sidebar-menu li').forEach(el => el.classList.remove('active'));
       liElement.classList.add('active');
@@ -207,7 +237,6 @@
       const sheet = sheetsData[index];
       const csv = sheet.csvData;
       const colWidths = sheet.colWidths || [];
-      
       document.getElementById('page-title').innerText = sheet.sheetName;
       
       if (sheet.sheetName === "行程表") {
@@ -220,10 +249,11 @@
         document.getElementById('day2').innerHTML = '';
         document.getElementById('day3').innerHTML = '';
         roleHeaders = [];
-        switchTab(1);
+        scheduleDates = {};
         
         parseItineraryCSV(csv);
         initFilters();
+        scrollToCurrentTime();
       } else {
         document.getElementById('itinerary-container').style.display = 'none';
         document.getElementById('itinerary-tabs').style.display = 'none';
@@ -231,9 +261,8 @@
         document.getElementById('generic-container').style.display = 'block';
         
         parseGenericCSV(csv, colWidths);
+        window.scrollTo(0, 0);
       }
-      
-      window.scrollTo(0, 0);
     }
 
     function parseCSVData(text) {
@@ -274,7 +303,16 @@
           }
           return;
         }
-        if (colA.includes('月') && colA.includes('日') && !colA.includes(':')) { currentDay++; return; }
+        
+        if (colA.includes('月') && colA.includes('日') && !colA.includes(':')) { 
+          currentDay++;
+          const match = colA.match(/(\d+)月(\d+)日/);
+          if (match) {
+            scheduleDates[currentDay] = { month: parseInt(match[1]), date: parseInt(match[2]) };
+          }
+          return; 
+        }
+        
         if (currentDay === 0 || currentDay > 3 || roleHeaders.length === 0) return;
 
         const timeActivity = (row[1] && row[1].trim() !== '') ? `${colA} ${row[1].trim()}` : colA;
@@ -282,11 +320,15 @@
         for (let i = 0; i < roleHeaders.length; i++) tasks.push(row[i + 2] ? row[i + 2].trim() : '');
         if (tasks.every(t => t === '')) return;
 
-        let cardHtml = `<div class="card"><div class="time-activity">${timeActivity}</div>`;
+        let timeStr = "";
+        const timeMatch = colA.match(/(\d{1,2}):(\d{2})/);
+        if (timeMatch) timeStr = `${timeMatch[1]}:${timeMatch[2]}`;
+
+        let cardHtml = `<div class="card" data-time="${timeStr}"><div class="time-activity">${timeActivity}</div>`;
         tasks.forEach((task, index) => {
           if (task && task !== '') {
             const colorClass = `color-${index % 10}`;
-            cardHtml += `<div class="role-row" data-role-index="${index}"><span class="role-label ${colorClass}">${roleHeaders[index]}</span><span class="role-task">${task.replace(/\r?\n/g, '<br>')}</span></div>`;
+            cardHtml += `<div class="role-row" data-role-index="${index}"><span class="role-label ${colorClass}">${roleHeaders[index]}</span><span class="role-task">${formatCellContent(task)}</span></div>`;
           }
         });
         cardHtml += `</div>`;
@@ -301,13 +343,11 @@
       const container = document.getElementById('generic-container');
       container.innerHTML = '';
       
-      const validLines = lines.filter(row => !row.every(cell => cell.trim() === ''));
-      if (validLines.length === 0) {
+      if (lines.length === 0 || (lines.length === 1 && lines[0].every(c => c.trim() === ''))) {
         container.innerHTML = '<div style="padding: 20px; text-align: center; color: #666;">データがありません。</div>';
         return;
       }
 
-      // スプレッドシートの列幅比率を計算
       let colGroupHtml = '';
       if (colWidths && colWidths.length > 0) {
         const totalWidth = colWidths.reduce((sum, w) => sum + w, 0);
@@ -322,19 +362,81 @@
       let html = '<div class="table-responsive"><table class="generic-table">';
       html += colGroupHtml;
       
-      validLines.forEach((row, rowIndex) => {
+      lines.forEach((row, rowIndex) => {
         if (rowIndex === 0) {
           html += '<thead><tr>';
-          row.forEach(cell => { html += `<th>${cell.replace(/\r?\n/g, '<br>')}</th>`; });
+          row.forEach(cell => { 
+            const content = formatCellContent(cell);
+            html += `<th>${content !== '' ? content : '<br>'}</th>`; 
+          });
           html += '</tr></thead><tbody>';
         } else {
           html += '<tr>';
-          row.forEach(cell => { html += `<td>${cell.replace(/\r?\n/g, '<br>')}</td>`; });
+          row.forEach(cell => { 
+            const content = formatCellContent(cell);
+            // 空白セルの高さが潰れないように <br> を挿入
+            html += `<td>${content !== '' ? content : '<br>'}</td>`; 
+          });
           html += '</tr>';
         }
       });
       html += '</tbody></table></div>';
       container.innerHTML = html;
+    }
+
+    function scrollToCurrentTime() {
+      const now = new Date();
+      const currentMonth = now.getMonth() + 1;
+      const currentDate = now.getDate();
+      const currentMinutesTotal = now.getHours() * 60 + now.getMinutes();
+
+      let activeDay = 1; 
+      
+      for (let day in scheduleDates) {
+        if (scheduleDates[day].month === currentMonth && scheduleDates[day].date === currentDate) {
+          activeDay = parseInt(day);
+          break;
+        }
+      }
+      switchTab(activeDay);
+
+      const cards = document.querySelectorAll(`#day${activeDay} .card`);
+      let targetCard = null;
+
+      for (let i = 0; i < cards.length; i++) {
+        const cardTime = cards[i].getAttribute('data-time');
+        if (cardTime) {
+          const parts = cardTime.split(':');
+          const cardMinutesTotal = parseInt(parts[0]) * 60 + parseInt(parts[1]);
+          if (cardMinutesTotal >= currentMinutesTotal) {
+            targetCard = cards[i];
+            break; 
+          }
+        }
+      }
+
+      if (!targetCard && cards.length > 0 && scheduleDates[activeDay]?.month === currentMonth && scheduleDates[activeDay]?.date === currentDate) {
+        targetCard = cards[cards.length - 1];
+      }
+
+      if (targetCard) {
+        setTimeout(() => {
+          targetCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          targetCard.classList.add('highlight');
+          setTimeout(() => targetCard.classList.remove('highlight'), 3000);
+        }, 500);
+      } else {
+        window.scrollTo(0, 0);
+      }
+    }
+
+    function openImageModal(src) {
+      document.getElementById('modal-image').src = src;
+      document.getElementById('image-modal').classList.add('active');
+    }
+    function closeImageModal() {
+      document.getElementById('image-modal').classList.remove('active');
+      document.getElementById('modal-image').src = '';
     }
 
     function toggleSidebar() {
@@ -374,7 +476,6 @@
       const filterContainer = document.getElementById('filter-container');
       filterContainer.innerHTML = '';
       if (roleHeaders.length === 0) return;
-      
       roleHeaders.forEach((header, index) => {
         const chip = document.createElement('div');
         chip.className = `filter-chip color-${index % 10} active`;
