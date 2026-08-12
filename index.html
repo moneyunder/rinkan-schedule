@@ -12,162 +12,34 @@
     --font-task-text: 15px;
     --font-tab: 16px;
   }
-  body.text-small {
-    --font-time: 15px;
-    --font-task-label: 11px;
-    --font-task-text: 13px;
-    --font-tab: 14px;
-  }
-  body.text-large {
-    --font-time: 19px;
-    --font-task-label: 13px;
-    --font-task-text: 17px;
-    --font-tab: 18px;
-  }
-
-  body { 
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; 
-    margin: 0; 
-    background-color: #f4f6f8; 
-    color: #333; 
-    -webkit-text-size-adjust: 100%;
-  }
-  .header-container { 
-    position: sticky; 
-    top: 0; 
-    background: #fff; 
-    z-index: 10; 
-    box-shadow: 0 2px 5px rgba(0,0,0,0.08); 
-  }
+  body.text-small { --font-time: 15px; --font-task-label: 11px; --font-task-text: 13px; --font-tab: 14px; }
+  body.text-large { --font-time: 19px; --font-task-label: 13px; --font-task-text: 17px; --font-tab: 18px; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; margin: 0; background-color: #f4f6f8; color: #333; -webkit-text-size-adjust: 100%; }
+  .header-container { position: sticky; top: 0; background: #fff; z-index: 10; box-shadow: 0 2px 5px rgba(0,0,0,0.08); }
+  .header-top { display: flex; justify-content: center; align-items: center; position: relative; padding: 12px 0 4px; }
+  .page-title { font-size: 18px; font-weight: bold; color: #0056b3; margin: 0; }
+  .settings-btn { position: absolute; right: 15px; background: none; border: none; font-size: 20px; cursor: pointer; padding: 5px; color: #555; -webkit-tap-highlight-color: transparent; }
+  .settings-panel { display: none; background: #f9f9f9; padding: 15px; border-top: 1px solid #eee; border-bottom: 1px solid #ddd; }
+  .settings-panel.open { display: block; }
+  .setting-section { margin-bottom: 18px; }
+  .setting-section:last-child { margin-bottom: 0; }
+  .setting-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .setting-title { font-size: 13px; font-weight: bold; color: #555; }
+  .font-size-controls { display: flex; gap: 10px; }
+  .font-btn { flex: 1; padding: 8px 0; text-align: center; background: #fff; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; font-weight: bold; color: #555; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .font-btn.active { background: #0056b3; color: #fff; border-color: #0056b3; }
+  .reset-btn { background: #e0e0e0; border: none; padding: 5px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; color: #333; -webkit-tap-highlight-color: transparent; }
+  .filter-container { display: flex; flex-wrap: wrap; gap: 8px; }
+  .filter-chip { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; user-select: none; border: 1px solid transparent; opacity: 0.45; filter: grayscale(100%); transition: all 0.2s ease; -webkit-tap-highlight-color: transparent; }
+  .filter-chip.active { opacity: 1; filter: grayscale(0%); border-color: currentColor; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
   
-  .header-top {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    padding: 12px 0 4px;
-  }
-  .page-title { 
-    font-size: 18px; 
-    font-weight: bold; 
-    color: #0056b3; 
-    margin: 0; 
-  }
-  .settings-btn {
-    position: absolute;
-    right: 15px;
-    background: none;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-    padding: 5px;
-    color: #555;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  .settings-panel {
-    display: none;
-    background: #f9f9f9;
-    padding: 15px;
-    border-top: 1px solid #eee;
-    border-bottom: 1px solid #ddd;
-  }
-  .settings-panel.open {
-    display: block;
-  }
-  .setting-section {
-    margin-bottom: 18px;
-  }
-  .setting-section:last-child {
-    margin-bottom: 0;
-  }
-  .setting-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-  .setting-title {
-    font-size: 13px;
-    font-weight: bold;
-    color: #555;
-  }
-  
-  .font-size-controls {
-    display: flex;
-    gap: 10px;
-  }
-  .font-btn {
-    flex: 1;
-    padding: 8px 0;
-    text-align: center;
-    background: #fff;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: bold;
-    color: #555;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .font-btn.active {
-    background: #0056b3;
-    color: #fff;
-    border-color: #0056b3;
-  }
-
-  .reset-btn {
-    background: #e0e0e0;
-    border: none;
-    padding: 5px 12px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: bold;
-    cursor: pointer;
-    color: #333;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  .filter-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .filter-chip {
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: bold;
-    cursor: pointer;
-    user-select: none;
-    border: 1px solid transparent;
-    opacity: 0.45;
-    filter: grayscale(100%);
-    transition: all 0.2s ease;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .filter-chip.active {
-    opacity: 1;
-    filter: grayscale(0%);
-    border-color: currentColor;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-  }
+  /* シート切り替えプルダウン */
+  .sheet-selector-container { text-align: center; padding: 0 15px 10px; }
+  .sheet-selector { width: 100%; padding: 8px; font-size: 15px; border-radius: 6px; border: 1px solid #ccc; background-color: #f9f9f9; }
 
   .tabs { display: flex; }
-  .tab { 
-    flex: 1; 
-    padding: 12px 0; 
-    text-align: center; 
-    font-weight: bold; 
-    font-size: var(--font-tab); 
-    cursor: pointer; 
-    border-bottom: 3px solid transparent; 
-    color: #888; 
-    -webkit-tap-highlight-color: transparent; 
-    user-select: none; 
-  }
+  .tab { flex: 1; padding: 12px 0; text-align: center; font-weight: bold; font-size: var(--font-tab); cursor: pointer; border-bottom: 3px solid transparent; color: #888; -webkit-tap-highlight-color: transparent; user-select: none; }
   .tab.active { border-bottom-color: #0056b3; color: #0056b3; }
-  
   .day-content { display: none; padding: 12px; }
   .day-content.active { display: block; }
   .card { background: #fff; border-radius: 8px; padding: 15px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
@@ -176,18 +48,7 @@
   .role-row:last-child { margin-bottom: 0; }
   .role-label { padding: 4px 6px; border-radius: 4px; font-size: var(--font-task-label); font-weight: bold; margin-right: 10px; width: 75px; text-align: center; flex-shrink: 0; }
   .role-task { padding-top: 1px; line-height: 1.5; word-break: break-word; }
-  
-  .color-0 { background: #e3f2fd; color: #0d47a1; }
-  .color-1 { background: #ffebee; color: #b71c1c; }
-  .color-2 { background: #e8f5e9; color: #1b5e20; }
-  .color-3 { background: #fff3e0; color: #e65100; }
-  .color-4 { background: #f3e5f5; color: #4a148c; }
-  .color-5 { background: #e0f2f1; color: #004d40; }
-  .color-6 { background: #fce4ec; color: #880e4f; }
-  .color-7 { background: #efebe9; color: #3e2723; }
-  .color-8 { background: #e8eaf6; color: #1a237e; }
-  .color-9 { background: #fff8e1; color: #ff6f00; }
-
+  .color-0 { background: #e3f2fd; color: #0d47a1; } .color-1 { background: #ffebee; color: #b71c1c; } .color-2 { background: #e8f5e9; color: #1b5e20; } .color-3 { background: #fff3e0; color: #e65100; } .color-4 { background: #f3e5f5; color: #4a148c; } .color-5 { background: #e0f2f1; color: #004d40; } .color-6 { background: #fce4ec; color: #880e4f; } .color-7 { background: #efebe9; color: #3e2723; } .color-8 { background: #e8eaf6; color: #1a237e; } .color-9 { background: #fff8e1; color: #ff6f00; }
   #loading { text-align: center; padding: 20px; font-size: 16px; color: #666; }
   #error-message { color: #b71c1c; text-align: center; padding: 20px; font-size: 15px; display: none; }
 </style>
@@ -198,6 +59,11 @@
     <div class="header-top">
       <h1 class="page-title">林間学校スタッフ行程表</h1>
       <button class="settings-btn" onclick="toggleSettings()">⚙️</button>
+    </div>
+
+    <!-- シート切り替えメニュー -->
+    <div class="sheet-selector-container" id="sheet-selector-container" style="display: none;">
+      <select id="sheet-selector" class="sheet-selector" onchange="changeSheet()"></select>
     </div>
     
     <div class="settings-panel" id="settings-panel">
@@ -228,7 +94,7 @@
     </div>
   </div>
 
-  <div id="loading">スケジュールを読み込み中...</div>
+  <div id="loading">合言葉を確認しています...</div>
   <div id="error-message"></div>
   
   <div id="day1" class="day-content active"></div>
@@ -236,57 +102,122 @@
   <div id="day3" class="day-content"></div>
 
   <script>
-    const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuIKDbPlkIKbIeIFFys1JT8jL6N4PNhLZOL7EMWkLhzNOw5E_UiIoB4Hc-6XYCzZ82GjiMYhasbmkB/pub?output=csv';
+    // 指定されたGASのURLを設定
+    const gasUrl = 'https://script.google.com/macros/s/AKfycbwgnfZN3l9qw8sZ1ti-QEhvC2ag0rmHdorEYdLQlaDENf0oIBWusnuFlT-eENLt_ZGd/exec';
 
     let roleHeaders = [];
+    let sheetsData = []; 
 
     async function loadData() {
+      const pass = prompt("行程表を見るための合言葉を入力してください");
+      if (!pass) {
+        document.getElementById('loading').innerText = "キャンセルされました。ページを再読み込みしてください。";
+        return;
+      }
+
       try {
-        const response = await fetch(csvUrl, { cache: "no-store" });
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const response = await fetch(`${gasUrl}?key=${pass}`, { cache: "no-store" });
+        const text = await response.text();
         
-        const buffer = await response.arrayBuffer();
-        const decoder = new TextDecoder('utf-8');
-        const text = decoder.decode(buffer);
+        if (text === "error") {
+          throw new Error("password_error");
+        }
         
-        parseCSV(text);
-        initFilters();
+        sheetsData = JSON.parse(text);
+        
+        if (sheetsData.length === 0) {
+          throw new Error("no_data");
+        }
+
+        const selector = document.getElementById('sheet-selector');
+        selector.innerHTML = '';
+        sheetsData.forEach((sheet, index) => {
+          const option = document.createElement('option');
+          option.value = index;
+          option.text = sheet.sheetName; 
+          selector.appendChild(option);
+        });
+        
+        document.getElementById('sheet-selector-container').style.display = 'block';
+
+        renderSheet(0);
         document.getElementById('loading').style.display = 'none';
+
       } catch (error) {
         document.getElementById('loading').style.display = 'none';
         const errorEl = document.getElementById('error-message');
-        errorEl.innerHTML = `データの読み込みに失敗しました。<br>通信環境をご確認の上、ページを再読み込みしてください。`;
+        if (error.message === "password_error") {
+          errorEl.innerHTML = `合言葉が違います。<br>ページを再読み込みしてやり直してください。`;
+        } else {
+          errorEl.innerHTML = `データの読み込みに失敗しました。<br>通信環境をご確認の上、ページを再読み込みしてください。`;
+        }
         errorEl.style.display = 'block';
       }
     }
 
-    function parseCSVLine(line) {
-      const result = [];
+    function changeSheet() {
+      const selector = document.getElementById('sheet-selector');
+      const index = parseInt(selector.value, 10);
+      renderSheet(index);
+    }
+
+    function renderSheet(index) {
+      document.getElementById('day1').innerHTML = '';
+      document.getElementById('day2').innerHTML = '';
+      document.getElementById('day3').innerHTML = '';
+      document.getElementById('filter-container').innerHTML = '';
+      document.getElementById('filter-section').style.display = 'none';
+      roleHeaders = [];
+      
+      switchTab(1);
+
+      const csv = sheetsData[index].csvData;
+      parseCSV(csv);
+      initFilters();
+    }
+
+    function parseCSVData(text) {
+      const rows = [];
+      let currentRow = [];
       let currentVal = '';
       let inQuotes = false;
-      for (let i = 0; i < line.length; i++) {
-        const char = line[i];
+
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        const nextChar = text[i + 1];
+
         if (char === '"') {
-          inQuotes = !inQuotes;
+          if (inQuotes && nextChar === '"') {
+            currentVal += '"';
+            i++;
+          } else {
+            inQuotes = !inQuotes;
+          }
         } else if (char === ',' && !inQuotes) {
-          result.push(currentVal);
+          currentRow.push(currentVal);
+          currentVal = '';
+        } else if ((char === '\n' || char === '\r') && !inQuotes) {
+          if (char === '\r' && nextChar === '\n') i++;
+          currentRow.push(currentVal);
+          rows.push(currentRow);
+          currentRow = [];
           currentVal = '';
         } else {
           currentVal += char;
         }
       }
-      result.push(currentVal);
-      return result.map(val => val.replace(/^"|"$/g, '').replace(/""/g, '"'));
+      if (currentVal !== '' || currentRow.length > 0) {
+        currentRow.push(currentVal);
+        rows.push(currentRow);
+      }
+      return rows;
     }
 
     function parseCSV(text) {
-      const lines = text.split(/\r\n|\n|\r/);
+      const lines = parseCSVData(text);
       let currentDay = 0;
 
-      lines.forEach(line => {
-        if (!line.trim()) return;
-        
-        const row = parseCSVLine(line);
+      lines.forEach(row => {
         if (row.length === 0 || !row[0]) return;
         const colA = row[0].trim();
         if (colA === '') return;
@@ -327,7 +258,7 @@
             cardHtml += `
               <div class="role-row" data-role-index="${index}">
                 <span class="role-label ${colorClass}">${roleHeaders[index]}</span>
-                <span class="role-task">${task.replace(/\n/g, '<br>')}</span>
+                <span class="role-task">${task.replace(/\r?\n/g, '<br>')}</span>
               </div>`;
           }
         });
