@@ -114,10 +114,11 @@
       </div>
     </div>
 
+    <!-- タブにIDを追加 -->
     <div class="tabs" id="itinerary-tabs" style="display: none;">
-      <div class="tab active" onclick="switchTab(1)">1日目</div>
-      <div class="tab" onclick="switchTab(2)">2日目</div>
-      <div class="tab" onclick="switchTab(3)">3日目</div>
+      <div class="tab active" id="tab-day1" onclick="switchTab(1)">1日目</div>
+      <div class="tab" id="tab-day2" onclick="switchTab(2)">2日目</div>
+      <div class="tab" id="tab-day3" onclick="switchTab(3)">3日目</div>
     </div>
   </div>
 
@@ -131,7 +132,6 @@
   </div>
   <div id="generic-container" class="generic-container"></div>
 
-  <!-- 画像モーダル -->
   <div id="image-modal" class="image-modal" onclick="closeImageModal()">
     <button class="modal-close">&times;</button>
     <img id="modal-image" src="" alt="拡大画像">
@@ -219,7 +219,8 @@
               imgSrc = `https://drive.google.com/uc?export=view&id=${fileIdMatch[1]}`;
             }
           }
-          return `<img src="${imgSrc}" class="inline-image" onclick="openImageModal('${imgSrc}')" alt="画像">`;
+          // 軽量化のため loading="lazy" を付与
+          return `<img src="${imgSrc}" class="inline-image" loading="lazy" onclick="openImageModal('${imgSrc}')" alt="画像">`;
         }
         return `<a href="${url}" target="_blank" rel="noopener" style="word-break: break-all;">${url}</a>`;
       });
@@ -252,6 +253,7 @@
         scheduleDates = {};
         
         parseItineraryCSV(csv);
+        updateTabsWithDates(); // タブの日付を更新
         initFilters();
         scrollToCurrentTime();
       } else {
@@ -262,6 +264,19 @@
         
         parseGenericCSV(csv, colWidths);
         window.scrollTo(0, 0);
+      }
+    }
+
+    function updateTabsWithDates() {
+      for (let i = 1; i <= 3; i++) {
+        const tab = document.getElementById(`tab-day${i}`);
+        if (tab) {
+          if (scheduleDates[i]) {
+            tab.innerText = `${scheduleDates[i].month}/${scheduleDates[i].date}`;
+          } else {
+            tab.innerText = `${i}日目`; // 日付が取得できなかった場合のフォールバック
+          }
+        }
       }
     }
 
@@ -374,7 +389,6 @@
           html += '<tr>';
           row.forEach(cell => { 
             const content = formatCellContent(cell);
-            // 空白セルの高さが潰れないように <br> を挿入
             html += `<td>${content !== '' ? content : '<br>'}</td>`; 
           });
           html += '</tr>';
