@@ -13,9 +13,10 @@
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; margin: 0; background-color: #f4f6f8; color: #333; -webkit-text-size-adjust: 100%; }
   
   .header-container { position: sticky; top: 0; background: #fff; z-index: 10; box-shadow: 0 2px 5px rgba(0,0,0,0.08); }
-  .header-top { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; }
-  .page-title { font-size: 17px; font-weight: bold; color: #0056b3; margin: 0; flex: 1; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .hamburger-btn, .settings-btn { background: none; border: none; font-size: 20px; cursor: pointer; padding: 5px; color: #555; -webkit-tap-highlight-color: transparent; display: flex; align-items: center; justify-content: center; }
+  .header-top { display: flex; justify-content: space-between; align-items: center; padding: 12px 10px; }
+  .page-title { font-size: 17px; font-weight: bold; color: #0056b3; margin: 0; flex: 1; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 10px; }
+  .icon-btn { background: none; border: none; cursor: pointer; padding: 5px; color: #555; -webkit-tap-highlight-color: transparent; display: flex; align-items: center; justify-content: center; }
+  .header-actions { display: flex; gap: 5px; }
   
   .sidebar-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 100; display: none; opacity: 0; transition: opacity 0.3s ease; }
   .sidebar-overlay.active { display: block; opacity: 1; }
@@ -35,7 +36,6 @@
   .setting-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
   .setting-title { font-size: 13px; font-weight: bold; color: #555; }
   
-  /* スライダーの目盛りスタイル */
   .font-size-slider-container { display: flex; align-items: center; gap: 5px; padding: 5px 0; }
   .slider-wrapper { flex: 1; position: relative; display: flex; flex-direction: column; margin: 0 10px; }
   .font-size-slider-container input[type="range"] { width: 100%; height: 6px; -webkit-appearance: none; background: #ddd; border-radius: 3px; outline: none; margin: 10px 0; z-index: 2; position: relative; }
@@ -81,10 +81,14 @@
   
   #loading { text-align: center; padding: 30px 20px; font-size: 16px; color: #666; }
   #error-message { color: #b71c1c; text-align: center; padding: 20px; font-size: 15px; display: none; margin: 15px; background: #ffebee; border-radius: 8px; }
+  
+  @keyframes spin { 100% { transform: rotate(360deg); } }
+  .spinning { animation: spin 1s linear infinite; }
 </style>
 </head>
 <body>
 
+  <!-- サイドバー -->
   <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
   <div class="sidebar" id="sidebar">
     <div class="sidebar-header">
@@ -94,19 +98,26 @@
     <ul class="sidebar-menu" id="sidebar-menu"></ul>
   </div>
 
+  <!-- ヘッダー -->
   <div class="header-container">
     <div class="header-top">
-      <button class="hamburger-btn" onclick="toggleSidebar()">
+      <button class="icon-btn" onclick="toggleSidebar()">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
       </button>
       <h1 class="page-title" id="page-title">読込中...</h1>
-      <button class="settings-btn" onclick="toggleSettings()">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-      </button>
+      <div class="header-actions">
+        <!-- 強制更新ボタン -->
+        <button class="icon-btn" id="reload-btn" onclick="loadData(true)">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+        </button>
+        <!-- 歯車（設定）ボタン -->
+        <button class="icon-btn" onclick="toggleSettings()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        </button>
+      </div>
     </div>
     
     <div class="settings-panel" id="settings-panel">
-      <!-- 文字サイズの設定にリセットボタンと目盛りを追加 -->
       <div class="setting-section">
         <div class="setting-header">
           <span class="setting-title">文字サイズ</span>
@@ -164,14 +175,17 @@
     let roleHeaders = [];
     let sheetsData = []; 
     let scheduleDates = {}; 
+    let currentSheetIndex = 0;
 
-    async function loadData() {
+    // データ読み込み処理 (forceRefreshがtrueのときはキャッシュを無視)
+    async function loadData(forceRefresh = false) {
       const storageKeyPass = 'rinkan2026_pass';
       const storageKeyTime = 'rinkan2026_time';
       let pass = localStorage.getItem(storageKeyPass);
       const savedTime = localStorage.getItem(storageKeyTime);
       const now = Date.now();
       
+      // パスワード保持チェック (12時間)
       if (!pass || !savedTime || (now - savedTime) > 12 * 60 * 60 * 1000) {
         pass = prompt("閲覧パスワードを入力してください");
         if (!pass) {
@@ -181,8 +195,24 @@
         }
       }
 
+      const reloadBtn = document.getElementById('reload-btn');
+      if (forceRefresh) {
+        reloadBtn.classList.add('spinning');
+        document.getElementById('loading').innerText = "最新データを取得しています...";
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('error-message').style.display = 'none';
+        document.getElementById('itinerary-container').style.display = 'none';
+        document.getElementById('generic-container').style.display = 'none';
+      }
+
       try {
-        const response = await fetch(`${gasUrl}?key=${pass}`, { cache: "no-store" });
+        // nocacheパラメータとタイムスタンプをつけて強制取得
+        let fetchUrl = `${gasUrl}?key=${pass}`;
+        if (forceRefresh) {
+          fetchUrl += `&nocache=true&t=${now}`;
+        }
+        
+        const response = await fetch(fetchUrl, { cache: "no-store" });
         if (!response.ok) throw new Error(`通信エラー`);
         const text = await response.text();
         if (text === "error") {
@@ -199,22 +229,22 @@
         const menuContainer = document.getElementById('sidebar-menu');
         menuContainer.innerHTML = '';
         
-        let targetIndex = 0;
+        // 更新時は現在のシートを維持
+        let targetIndex = forceRefresh ? currentSheetIndex : 0;
+        
         sheetsData.forEach((sheet, index) => {
           const li = document.createElement('li');
           li.innerText = sheet.sheetName;
           li.onclick = () => { selectSheet(index, li); };
           menuContainer.appendChild(li);
           
-          if (sheet.sheetName === "行程表") {
+          if (!forceRefresh && sheet.sheetName === "行程表") {
             targetIndex = index;
+          }
+          if (index === targetIndex) {
             li.classList.add('active');
           }
         });
-        
-        if (targetIndex === 0 && sheetsData[0].sheetName !== "行程表") {
-          menuContainer.firstChild.classList.add('active');
-        }
 
         renderSheet(targetIndex);
         document.getElementById('loading').style.display = 'none';
@@ -225,6 +255,10 @@
         errorEl.innerHTML = `<strong>エラー</strong><br>${error.message}<br>ページを再読み込みしてください。`;
         errorEl.style.display = 'block';
         document.getElementById('page-title').innerText = "エラー";
+      } finally {
+        if (forceRefresh) {
+          reloadBtn.classList.remove('spinning');
+        }
       }
     }
 
@@ -255,6 +289,7 @@
     }
 
     function renderSheet(index) {
+      currentSheetIndex = index; // 現在開いているシートを記録
       const sheet = sheetsData[index];
       const csv = sheet.csvData;
       const colWidths = sheet.colWidths || [];
@@ -339,7 +374,7 @@
           return;
         }
         
-        if (colA.includes('月') && colA.includes('日') && !colA.includes(':')) { 
+        if (colA.includes('月') && colA.includes('日') && !colA.match(/\d{1,2}[:：]\d{2}/)) { 
           currentDay++;
           const match = colA.match(/(\d+)月(\d+)日/);
           if (match) {
@@ -350,13 +385,15 @@
         
         if (currentDay === 0 || currentDay > 3 || roleHeaders.length === 0) return;
 
-        const timeActivity = (row[1] && row[1].trim() !== '') ? `${colA} ${row[1].trim()}` : colA;
+        const activity = row[1] ? row[1].trim() : '';
+        const timeActivity = activity !== '' ? `${colA} ${activity}` : colA;
         const tasks = [];
         for (let i = 0; i < roleHeaders.length; i++) tasks.push(row[i + 2] ? row[i + 2].trim() : '');
-        if (tasks.every(t => t === '')) return;
+        
+        if (tasks.every(t => t === '') && activity === '') return;
 
         let timeStr = "";
-        const timeMatch = colA.match(/(\d{1,2}):(\d{2})/);
+        const timeMatch = colA.match(/(\d{1,2})[:：](\d{2})/);
         if (timeMatch) timeStr = `${timeMatch[1]}:${timeMatch[2]}`;
 
         let cardHtml = `<div class="card" data-time="${timeStr}"><div class="time-activity">${timeActivity}</div>`;
@@ -429,6 +466,7 @@
 
       let activeDay = 1; 
       
+      // 今日の日付があればそのタブを開く
       for (let day in scheduleDates) {
         if (scheduleDates[day].month === currentMonth && scheduleDates[day].date === currentDate) {
           activeDay = parseInt(day);
@@ -508,7 +546,6 @@
       root.style.setProperty('--font-table', sizes[level].table);
     }
     
-    // スライダーを標準（値：3）に戻す処理
     function resetFontSize() {
       const slider = document.getElementById('font-slider');
       slider.value = 3;
